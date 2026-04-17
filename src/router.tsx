@@ -1,13 +1,14 @@
 import { createRouter, useRouter } from "@tanstack/react-router";
+import { QueryClient } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
+import { createAppQueryClient } from "@/lib/query-client";
 
 function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+        <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-destructive/10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-8 w-8 text-destructive"
@@ -24,14 +25,7 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
           </svg>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          An unexpected error occurred. Please try again.
-        </p>
-        {import.meta.env.DEV && error.message && (
-          <pre className="mt-4 max-h-40 overflow-auto rounded-md bg-muted p-3 text-left font-mono text-xs text-destructive">
-            {error.message}
-          </pre>
-        )}
+        <p className="mt-2 text-sm text-muted-foreground">{error.message || "An unexpected error occurred."}</p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <button
             onClick={() => {
@@ -54,14 +48,25 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
   );
 }
 
+export interface RouterAppContext {
+  queryClient: QueryClient;
+}
+
 export const getRouter = () => {
+  // Fresh QueryClient per request — never share across SSR requests
+  const queryClient = createAppQueryClient();
   const router = createRouter({
     routeTree,
-    context: {},
+    context: { queryClient } satisfies RouterAppContext,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
   });
-
   return router;
 };
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: ReturnType<typeof getRouter>;
+  }
+}

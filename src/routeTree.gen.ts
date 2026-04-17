@@ -9,38 +9,150 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRmIndexRouteImport } from './routes/app.rm.index'
+import { Route as AppInvestorIndexRouteImport } from './routes/app.investor.index'
+import { Route as AppDistributorIndexRouteImport } from './routes/app.distributor.index'
+import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRmIndexRoute = AppRmIndexRouteImport.update({
+  id: '/rm/',
+  path: '/rm/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvestorIndexRoute = AppInvestorIndexRouteImport.update({
+  id: '/investor/',
+  path: '/investor/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDistributorIndexRoute = AppDistributorIndexRouteImport.update({
+  id: '/distributor/',
+  path: '/distributor/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/distributor/': typeof AppDistributorIndexRoute
+  '/app/investor/': typeof AppInvestorIndexRoute
+  '/app/rm/': typeof AppRmIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/app/admin': typeof AppAdminIndexRoute
+  '/app/distributor': typeof AppDistributorIndexRoute
+  '/app/investor': typeof AppInvestorIndexRoute
+  '/app/rm': typeof AppRmIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/distributor/': typeof AppDistributorIndexRoute
+  '/app/investor/': typeof AppInvestorIndexRoute
+  '/app/rm/': typeof AppRmIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/forgot-password'
+    | '/login'
+    | '/app/admin/'
+    | '/app/distributor/'
+    | '/app/investor/'
+    | '/app/rm/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/forgot-password'
+    | '/login'
+    | '/app/admin'
+    | '/app/distributor'
+    | '/app/investor'
+    | '/app/rm'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/forgot-password'
+    | '/login'
+    | '/app/admin/'
+    | '/app/distributor/'
+    | '/app/investor/'
+    | '/app/rm/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +160,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/rm/': {
+      id: '/app/rm/'
+      path: '/rm'
+      fullPath: '/app/rm/'
+      preLoaderRoute: typeof AppRmIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/investor/': {
+      id: '/app/investor/'
+      path: '/investor'
+      fullPath: '/app/investor/'
+      preLoaderRoute: typeof AppInvestorIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/distributor/': {
+      id: '/app/distributor/'
+      path: '/distributor'
+      fullPath: '/app/distributor/'
+      preLoaderRoute: typeof AppDistributorIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/': {
+      id: '/app/admin/'
+      path: '/admin'
+      fullPath: '/app/admin/'
+      preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppAdminIndexRoute: typeof AppAdminIndexRoute
+  AppDistributorIndexRoute: typeof AppDistributorIndexRoute
+  AppInvestorIndexRoute: typeof AppInvestorIndexRoute
+  AppRmIndexRoute: typeof AppRmIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAdminIndexRoute: AppAdminIndexRoute,
+  AppDistributorIndexRoute: AppDistributorIndexRoute,
+  AppInvestorIndexRoute: AppInvestorIndexRoute,
+  AppRmIndexRoute: AppRmIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
