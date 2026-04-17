@@ -1,0 +1,102 @@
+import type { KycOverview } from "@/types/kyc";
+
+export const KYC_FIXTURE: KycOverview = {
+  status: "verified",
+  provider: "NDML",
+  lastUpdated: "2026-03-12T10:24:00Z",
+  steps: [
+    {
+      id: "pan",
+      label: "PAN Verification",
+      description: "PAN validated against the Income Tax database.",
+      status: "completed",
+      completedAt: "2026-03-08T09:12:00Z",
+    },
+    {
+      id: "aadhaar",
+      label: "Aadhaar e-KYC",
+      description: "Aadhaar verified via UIDAI OTP.",
+      status: "completed",
+      completedAt: "2026-03-09T11:42:00Z",
+    },
+    {
+      id: "ipv",
+      label: "In-Person Verification (Video)",
+      description: "Live video KYC completed with NDML officer.",
+      status: "completed",
+      completedAt: "2026-03-10T16:02:00Z",
+    },
+    {
+      id: "esign",
+      label: "Aadhaar e-Sign",
+      description: "Account opening form digitally signed.",
+      status: "completed",
+      completedAt: "2026-03-11T08:10:00Z",
+    },
+    {
+      id: "fatca",
+      label: "FATCA Declaration",
+      description: "Tax residency confirmed.",
+      status: "completed",
+      completedAt: "2026-03-12T10:24:00Z",
+    },
+    {
+      id: "nominee",
+      label: "Nominee Registration",
+      description: "Add or opt-out of nominee assignment.",
+      status: "in_progress",
+    },
+  ],
+  profile: {
+    fullName: "Aarav Mehta",
+    email: "[email protected]",
+    phone: "+91 98•••••432",
+    dob: "1992-07-18",
+    panMasked: "ABCDE****F",
+    aadhaarMasked: "XXXX-XXXX-1234",
+    address: {
+      line1: "Flat 1204, Lodha Belmondo",
+      line2: "Powai",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pincode: "400076",
+      country: "India",
+    },
+  },
+  bankAccounts: [
+    {
+      id: "ba_hdfc_primary",
+      bankName: "HDFC Bank",
+      accountNumberMasked: "XXXXXX7842",
+      ifsc: "HDFC0001234",
+      accountType: "savings",
+      isPrimary: true,
+      verified: true,
+    },
+    {
+      id: "ba_icici",
+      bankName: "ICICI Bank",
+      accountNumberMasked: "XXXXXX2199",
+      ifsc: "ICIC0004567",
+      accountType: "savings",
+      isPrimary: false,
+      verified: true,
+    },
+  ],
+  nominees: [
+    {
+      id: "nm_1",
+      name: "Saanvi Mehta",
+      relation: "Spouse",
+      dob: "1994-02-04",
+      sharePct: 60,
+    },
+    {
+      id: "nm_2",
+      name: "Rohan Mehta",
+      relation: "Father",
+      dob: "1962-11-22",
+      sharePct: 40,
+    },
+  ],
+};
