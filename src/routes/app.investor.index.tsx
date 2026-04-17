@@ -35,9 +35,13 @@ function InvestorDashboard() {
         description="Track holdings, run SIPs, and execute orders on BSE Star MF — all in one place."
         actions={
           <>
-            <Button variant="outline">Add funds</Button>
-            <Button className="gap-2">
-              Start SIP <ArrowUpRight className="h-4 w-4" />
+            <Button asChild variant="outline">
+              <Link to="/app/investor/explore">Explore funds</Link>
+            </Button>
+            <Button asChild className="gap-2">
+              <Link to="/app/investor/orders/lumpsum">
+                Invest now <ArrowUpRight className="h-4 w-4" />
+              </Link>
             </Button>
           </>
         }

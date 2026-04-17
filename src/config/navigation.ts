@@ -15,6 +15,8 @@ import {
   Calculator,
   Bell,
   Settings,
+  Compass,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 import type { UserRole } from "@/types/auth";
@@ -37,14 +39,17 @@ const investorNav: NavSection[] = [
     items: [
       { label: "Dashboard", to: "/app/investor", icon: LayoutDashboard },
       { label: "Portfolio", to: "/app/investor/portfolio", icon: PieChart },
+      { label: "Transactions", to: "/app/investor/transactions", icon: ReceiptText },
     ],
   },
   {
     label: "Invest",
     items: [
-      { label: "Buy / SIP", to: "/app/investor/invest", icon: Wallet },
-      { label: "Switch / Redeem", to: "/app/investor/redeem", icon: Repeat2 },
-      { label: "Transactions", to: "/app/investor/transactions", icon: ReceiptText },
+      { label: "Explore Schemes", to: "/app/investor/explore", icon: Compass },
+      { label: "Lumpsum", to: "/app/investor/orders/lumpsum", icon: TrendingUp },
+      { label: "SIP", to: "/app/investor/orders/sip", icon: Wallet, badge: "Soon" },
+      { label: "Redeem", to: "/app/investor/orders/redeem", icon: Wallet, badge: "Soon" },
+      { label: "Switch", to: "/app/investor/orders/switch", icon: Repeat2, badge: "Soon" },
     ],
   },
   {
@@ -57,7 +62,7 @@ const investorNav: NavSection[] = [
   },
   {
     label: "Account",
-    items: [{ label: "KYC & Profile", to: "/app/investor/kyc", icon: ShieldCheck }],
+    items: [{ label: "KYC & Profile", to: "/app/investor/profile", icon: ShieldCheck }],
   },
 ];
 
