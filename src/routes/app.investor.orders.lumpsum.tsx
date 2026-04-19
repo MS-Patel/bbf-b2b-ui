@@ -344,7 +344,7 @@ function LumpsumWizard() {
                   />
                   <ReviewRow
                     label="Folio"
-                    value={amountValues.folioMode === "new" ? "New folio" : `Existing — ${amountValues.folioNumber}`}
+                    value={amountValues.folioMode === "new" ? "New folio" : `Existing — ${amountValues.folioNumber ?? ""}`}
                   />
                 </div>
               </div>
