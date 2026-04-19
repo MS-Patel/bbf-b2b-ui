@@ -47,9 +47,9 @@ const investorNav: NavSection[] = [
     items: [
       { label: "Explore Schemes", to: "/app/investor/explore", icon: Compass },
       { label: "Lumpsum", to: "/app/investor/orders/lumpsum", icon: TrendingUp },
-      { label: "SIP", to: "/app/investor/orders/sip", icon: Wallet, badge: "Soon" },
-      { label: "Redeem", to: "/app/investor/orders/redeem", icon: Wallet, badge: "Soon" },
-      { label: "Switch", to: "/app/investor/orders/switch", icon: Repeat2, badge: "Soon" },
+      { label: "SIP", to: "/app/investor/orders/sip", icon: Wallet },
+      { label: "Redeem", to: "/app/investor/orders/redeem", icon: Wallet },
+      { label: "Switch", to: "/app/investor/orders/switch", icon: Repeat2 },
     ],
   },
   {
