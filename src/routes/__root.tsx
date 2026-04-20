@@ -42,19 +42,21 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "BuyBestFin — Mutual Fund & Wealth Platform" },
+      { title: "BuyBestFin — Mutual Fund Investing by Navinchandra Securities" },
       {
         name: "description",
         content:
-          "BuyBestFin is a unified mutual-fund and wealth-management platform for investors, RMs, distributors, and operations teams.",
+          "BuyBestFin by Navinchandra Securities (ARN: 147231) — invest in mutual funds, track portfolios, and manage SIPs with a trusted AMFI-registered distributor.",
       },
-      { name: "author", content: "BuyBestFin" },
-      { property: "og:title", content: "BuyBestFin — Mutual Fund & Wealth Platform" },
-      { property: "og:description", content: "Modern mutual-fund operations for the entire value chain." },
+      { name: "author", content: "Navinchandra Securities" },
+      { property: "og:title", content: "BuyBestFin — Mutual Fund Investing" },
+      { property: "og:description", content: "Mutual-fund investing made simple. By Navinchandra Securities (ARN: 147231)." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
