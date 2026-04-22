@@ -145,13 +145,13 @@ function ProfilePage() {
                   <Button
                     variant="outline"
                     className="gap-2"
-                    onClick={() => toast.info("Add bank account", { description: "Bank verification flow coming soon." })}
+                    onClick={() => setBankOpen(true)}
                   >
                     <Plus className="h-4 w-4" /> Add bank
                   </Button>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
-                  {data.bankAccounts.map((b) => (
+                  {banks.map((b) => (
                     <Card key={b.id} className={cn("shadow-card", b.isPrimary && "ring-1 ring-primary/30")}>
                       <CardContent className="flex items-start justify-between gap-3 p-5">
                         <div className="flex items-start gap-3">
@@ -186,18 +186,21 @@ function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-semibold">Registered nominees</h3>
-                    <p className="text-sm text-muted-foreground">Total share allocated must equal 100%.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total share: <span className="font-semibold text-foreground">{totalShare}%</span> of 100%.
+                    </p>
                   </div>
                   <Button
                     variant="outline"
                     className="gap-2"
-                    onClick={() => toast.info("Add nominee", { description: "Nominee onboarding flow coming soon." })}
+                    onClick={() => setNomineeOpen(true)}
+                    disabled={totalShare >= 100}
                   >
                     <UserPlus className="h-4 w-4" /> Add nominee
                   </Button>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
-                  {data.nominees.map((n) => (
+                  {nominees.map((n) => (
                     <Card key={n.id} className="shadow-card">
                       <CardContent className="flex items-center justify-between gap-3 p-5">
                         <div>
