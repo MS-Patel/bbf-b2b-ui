@@ -44,6 +44,23 @@ const STATUS_LABEL: Record<KycOverallStatus, string> = {
 
 function ProfilePage() {
   const { data, isLoading } = useKycOverviewQuery();
+  const [bankOpen, setBankOpen] = useState(false);
+  const [nomineeOpen, setNomineeOpen] = useState(false);
+  const [extraBanks, setExtraBanks] = useState<BankAccount[]>([]);
+  const [extraNominees, setExtraNominees] = useState<Nominee[]>([]);
+
+  const banks = useMemo<BankAccount[]>(
+    () => [...(data?.bankAccounts ?? []), ...extraBanks],
+    [data?.bankAccounts, extraBanks],
+  );
+  const nominees = useMemo<Nominee[]>(
+    () => [...(data?.nominees ?? []), ...extraNominees],
+    [data?.nominees, extraNominees],
+  );
+  const totalShare = useMemo(
+    () => nominees.reduce((sum, n) => sum + n.sharePct, 0),
+    [nominees],
+  );
 
   return (
     <>
