@@ -59,14 +59,16 @@ export function SchemeCard({ scheme }: SchemeCardProps) {
         </div>
 
         <div className="mt-auto flex gap-2 pt-1">
+          <Button asChild variant="outline" className="flex-1">
+            <Link to="/app/investor/explore/$schemeId" params={{ schemeId: scheme.id }}>
+              View
+            </Link>
+          </Button>
           <Button asChild className="flex-1 gap-1.5">
             <Link to="/app/investor/orders/lumpsum" search={{ schemeId: scheme.id }}>
               <TrendingUp className="h-3.5 w-3.5" />
               Invest
             </Link>
-          </Button>
-          <Button variant="outline" className="flex-1" disabled>
-            Start SIP
           </Button>
         </div>
       </CardContent>

@@ -92,7 +92,14 @@ function LoginPage() {
               </TabsContent>
             </Tabs>
 
-            <p className="mt-8 text-center text-xs text-muted-foreground">
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              New to BuyBestFin?{" "}
+              <Link to="/signup" className="font-semibold text-foreground hover:underline">
+                Create account
+              </Link>
+            </p>
+
+            <p className="mt-6 text-center text-xs text-muted-foreground">
               By signing in you agree to BuyBestFin{" "}
               <a className="font-medium text-foreground underline-offset-4 hover:underline">Terms</a>{" "}
               and{" "}

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
@@ -40,7 +41,13 @@ import { Route as AppInvestorOrdersSwitchRouteImport } from './routes/app.invest
 import { Route as AppInvestorOrdersSipRouteImport } from './routes/app.investor.orders.sip'
 import { Route as AppInvestorOrdersRedeemRouteImport } from './routes/app.investor.orders.redeem'
 import { Route as AppInvestorOrdersLumpsumRouteImport } from './routes/app.investor.orders.lumpsum'
+import { Route as AppInvestorExploreSchemeIdRouteImport } from './routes/app.investor.explore.$schemeId'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -199,12 +206,19 @@ const AppInvestorOrdersLumpsumRoute =
     path: '/investor/orders/lumpsum',
     getParentRoute: () => AppRoute,
   } as any)
+const AppInvestorExploreSchemeIdRoute =
+  AppInvestorExploreSchemeIdRouteImport.update({
+    id: '/$schemeId',
+    path: '/$schemeId',
+    getParentRoute: () => AppInvestorExploreRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
@@ -213,7 +227,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRoute
+  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -227,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
+  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
   '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
   '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
   '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
@@ -238,6 +253,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
@@ -246,7 +262,7 @@ export interface FileRoutesByTo {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRoute
+  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -260,6 +276,7 @@ export interface FileRoutesByTo {
   '/app/distributor': typeof AppDistributorIndexRoute
   '/app/investor': typeof AppInvestorIndexRoute
   '/app/rm': typeof AppRmIndexRoute
+  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
   '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
   '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
   '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
@@ -272,6 +289,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
@@ -280,7 +298,7 @@ export interface FileRoutesById {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRoute
+  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -294,6 +312,7 @@ export interface FileRoutesById {
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
+  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
   '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
   '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
   '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
@@ -307,6 +326,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
+    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
@@ -329,6 +349,7 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
+    | '/app/investor/explore/$schemeId'
     | '/app/investor/orders/lumpsum'
     | '/app/investor/orders/redeem'
     | '/app/investor/orders/sip'
@@ -340,6 +361,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
+    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
@@ -362,6 +384,7 @@ export interface FileRouteTypes {
     | '/app/distributor'
     | '/app/investor'
     | '/app/rm'
+    | '/app/investor/explore/$schemeId'
     | '/app/investor/orders/lumpsum'
     | '/app/investor/orders/redeem'
     | '/app/investor/orders/sip'
@@ -373,6 +396,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
+    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
@@ -395,6 +419,7 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
+    | '/app/investor/explore/$schemeId'
     | '/app/investor/orders/lumpsum'
     | '/app/investor/orders/redeem'
     | '/app/investor/orders/sip'
@@ -407,10 +432,18 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -628,8 +661,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInvestorOrdersLumpsumRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/investor/explore/$schemeId': {
+      id: '/app/investor/explore/$schemeId'
+      path: '/$schemeId'
+      fullPath: '/app/investor/explore/$schemeId'
+      preLoaderRoute: typeof AppInvestorExploreSchemeIdRouteImport
+      parentRoute: typeof AppInvestorExploreRoute
+    }
   }
 }
+
+interface AppInvestorExploreRouteChildren {
+  AppInvestorExploreSchemeIdRoute: typeof AppInvestorExploreSchemeIdRoute
+}
+
+const AppInvestorExploreRouteChildren: AppInvestorExploreRouteChildren = {
+  AppInvestorExploreSchemeIdRoute: AppInvestorExploreSchemeIdRoute,
+}
+
+const AppInvestorExploreRouteWithChildren =
+  AppInvestorExploreRoute._addFileChildren(AppInvestorExploreRouteChildren)
 
 interface AppInvestorPortfolioRouteChildren {
   AppInvestorPortfolioHoldingIdRoute: typeof AppInvestorPortfolioHoldingIdRoute
@@ -651,7 +702,7 @@ interface AppRouteChildren {
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
   AppDistributorCommissionsRoute: typeof AppDistributorCommissionsRoute
-  AppInvestorExploreRoute: typeof AppInvestorExploreRoute
+  AppInvestorExploreRoute: typeof AppInvestorExploreRouteWithChildren
   AppInvestorGoalsRoute: typeof AppInvestorGoalsRoute
   AppInvestorInsightsRoute: typeof AppInvestorInsightsRoute
   AppInvestorPortfolioRoute: typeof AppInvestorPortfolioRouteWithChildren
@@ -680,7 +731,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
   AppDistributorCommissionsRoute: AppDistributorCommissionsRoute,
-  AppInvestorExploreRoute: AppInvestorExploreRoute,
+  AppInvestorExploreRoute: AppInvestorExploreRouteWithChildren,
   AppInvestorGoalsRoute: AppInvestorGoalsRoute,
   AppInvestorInsightsRoute: AppInvestorInsightsRoute,
   AppInvestorPortfolioRoute: AppInvestorPortfolioRouteWithChildren,
@@ -707,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
