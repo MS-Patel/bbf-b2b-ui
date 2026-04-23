@@ -1,5 +1,6 @@
-import type { ClientLite, OnboardingLead, RmEarnings, LeadStage } from "@/types/rm";
+import type { ClientLite, RmEarnings } from "@/types/rm";
 import type { KycStatusLite } from "@/types/admin";
+export { ONBOARDING_LEADS_FIXTURE as RM_LEADS_FIXTURE } from "@/features/onboarding/fixtures";
 
 function seeded(seed: number) {
   let s = seed;
