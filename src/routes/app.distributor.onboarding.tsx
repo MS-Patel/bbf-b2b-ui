@@ -14,31 +14,31 @@ import { LeadDetailSheet } from "@/features/onboarding/components/lead-detail-sh
 import { OnboardingStats } from "@/features/onboarding/components/onboarding-stats";
 import type { OnboardingLead } from "@/features/onboarding/types";
 
-export const Route = createFileRoute("/app/rm/onboarding")({
+export const Route = createFileRoute("/app/distributor/onboarding")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "rm") throw redirect({ to: ROLE_HOME[user.role] });
+    if (user && user.role !== "distributor") throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Onboarding — RM" }] }),
-  component: RmOnboardingPage,
+  head: () => ({ meta: [{ title: "Onboarding — Distributor" }] }),
+  component: DistributorOnboardingPage,
 });
 
-function RmOnboardingPage() {
+function DistributorOnboardingPage() {
   const user = useAuthStore((s) => s.user);
   const { data } = useLeadsQuery({ scope: "mine", ownerId: user?.id });
   const leads = data ?? [];
   const [selected, setSelected] = useState<OnboardingLead | null>(null);
 
   const owner = user
-    ? { id: user.id, role: "rm" as const, name: user.fullName }
-    : { id: "usr_rm_001", role: "rm" as const, name: "Priya Nair" };
+    ? { id: user.id, role: "distributor" as const, name: user.fullName }
+    : { id: "usr_dist_001", role: "distributor" as const, name: "Rohan Kapoor" };
 
   return (
     <>
       <PageHeader
-        eyebrow="RM · Onboarding"
-        title="Conversion pipeline"
-        description={`${leads.length} leads in flight across the funnel.`}
+        eyebrow="Distributor · Onboarding"
+        title="Lead pipeline"
+        description={`${leads.length} leads under your ARN. Invite, track and convert.`}
         actions={
           <InviteLeadDialog
             owner={owner}

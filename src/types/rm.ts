@@ -13,18 +13,6 @@ export interface ClientLite {
   joinedAt: string;
 }
 
-export type LeadStage = "lead" | "kyc_started" | "kyc_in_review" | "verified" | "first_invest";
-
-export interface OnboardingLead {
-  id: string;
-  fullName: string;
-  email: string;
-  stage: LeadStage;
-  source: "Referral" | "Website" | "Campaign" | "RM Direct";
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface RmEarnings {
   mtdCommission: number;
   ytdCommission: number;
@@ -32,3 +20,6 @@ export interface RmEarnings {
   aumServiced: number;
   monthly: Array<{ month: string; commission: number; aum: number }>;
 }
+
+// Re-export onboarding types from the canonical module to avoid duplication.
+export type { LeadStage, OnboardingLead } from "@/features/onboarding/types";
