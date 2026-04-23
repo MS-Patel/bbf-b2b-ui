@@ -18,7 +18,7 @@ function seeded(seed: number) {
 
 const FIRST = ["Aarav", "Saanvi", "Vivaan", "Anaya", "Reyansh", "Diya", "Krishna", "Kiara", "Arjun", "Myra", "Rohan", "Ishita", "Kabir", "Sara", "Aryan", "Riya", "Dev", "Aanya", "Yash", "Tara"];
 const LAST = ["Mehta", "Iyer", "Sharma", "Khanna", "Bose", "Reddy", "Patel", "Nair", "Verma", "Gupta", "Kapoor", "Singh", "Rao", "Joshi", "Bhatt"];
-const ROLES: UserRole[] = ["investor", "investor", "investor", "investor", "investor", "rm", "distributor"];
+const ROLES: UserRole[] = ["rm", "rm", "rm", "distributor", "distributor", "admin"];
 const KYC = ["verified", "verified", "verified", "pending", "rejected", "not_started"] as const;
 const STATUS = ["active", "active", "active", "suspended", "invited"] as const;
 
@@ -44,7 +44,7 @@ function buildUsers(): PlatformUser[] {
       status: STATUS[Math.floor(r() * STATUS.length)]!,
       joinedAt: joined.toISOString(),
       lastActiveAt: last.toISOString(),
-      aum: role === "investor" ? Math.round(50_000 + r() * 8_000_000) : undefined,
+      aum: role === "distributor" || role === "rm" ? Math.round(5_000_000 + r() * 200_000_000) : undefined,
     });
   }
   return out;
