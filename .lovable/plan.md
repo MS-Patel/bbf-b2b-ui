@@ -1,79 +1,109 @@
 
 
-# B2B Conversion + Investor Read-Only Impersonation Views
+# Investor Onboarding Flow (Admin / RM / Distributor)
 
-Strip B2C self-service surface, but **keep a minimal, read-only Investor UI** so RM/Admin can impersonate a client and see exactly what that client sees. Add the missing Reconciliation Module.
+A partner-driven onboarding pipeline where Admin, RM, or Distributor can **invite** an investor, **collect KYC** on their behalf (or send a magic link), **track progress** through a Kanban funnel, and **convert** the verified investor into an active client. No B2C self-signup — this is the B2B way to bring an investor onto the platform.
 
-## Decisions
+## Scope
 
-- **Keep** (read-only, impersonation-only): Investor Dashboard, Portfolio (+ holding detail), Transactions, Goals, Tax, Profile/KYC view. These are reachable **only** when `useImpersonationStore.client` is set, launched from the RM Client Roster.
-- **Delete** (true B2C self-service, no impersonation value): `signup`, Explore + scheme detail, all 4 Order wizards (lumpsum/SIP/redeem/switch), AI Insights, public landing investor copy.
-- **Guard**: every kept investor route's `beforeLoad` requires `impersonating != null` for non-investor roles. No direct logins land here.
-- **Banner**: existing `ImpersonationBanner` already handles the read-only chrome. All write CTAs (Invest, Start SIP, Add Bank, Add Nominee, New Goal) hidden when `readOnly`.
+### Capabilities (per role)
+- **RM**: invite leads, drive KYC for own assigned leads, view own funnel.
+- **Distributor**: invite leads under their ARN, view own funnel, hand off to RM if needed.
+- **Admin**: see all leads platform-wide, reassign owner, force-approve / reject KYC, view audit trail.
+
+### Funnel stages (reuse existing `LeadStage`)
+`lead → kyc_started → kyc_in_review → verified → first_invest`
 
 ## Build plan
 
-### 1. Strip pure B2C surface
-**Delete**:
-- `src/routes/signup.tsx`
-- `src/routes/app.investor.explore.tsx`, `app.investor.explore.$schemeId.tsx`
-- `src/routes/app.investor.orders.{lumpsum,sip,redeem,switch}.tsx`
-- `src/routes/app.investor.insights.tsx`
-- `src/features/{orders,schemes,insights}/` (folders + types)
-- `src/types/{orders,scheme,insights}.ts`
+### 1. Shared onboarding feature module — `src/features/onboarding/`
+- `types.ts` — extend `OnboardingLead` with `ownerId`, `ownerRole`, `ownerName`, `assignedRm?`, `pan?`, `phone?`, `notes?`, `kycChecklist: { pan, aadhaar, bank, nominee, fatca, esign }` (each `pending | submitted | verified | rejected`), `rejectionReason?`, `inviteSentAt?`, `inviteLink?` (mock UUID).
+- `fixtures.ts` — seed ~30 leads spread across stages, assigned to mixed RMs/distributors. Move `RM_LEADS_FIXTURE` here and re-export from `rm/fixtures.ts` for backward compat.
+- `api.ts` — TanStack Query hooks against in-memory store (mock):
+  - `useLeadsQuery({ scope: "mine" | "all", ownerId? })`
+  - `useLeadQuery(id)`
+  - `useInviteLeadMutation()` — creates lead at stage `lead`, generates magic link
+  - `useUpdateKycChecklistMutation()` — flips checklist items, advances stage automatically
+  - `useAdvanceStageMutation()` — explicit stage transition with optimistic update
+  - `useReassignLeadMutation()` — Admin only
+  - `useRejectLeadMutation()` — Admin only, sets rejectionReason
+- `schemas.ts` — Zod for invite form (name, email, phone, PAN optional, source, assignedRm optional) and KYC update (file/field per checklist item).
 
-### 2. Lock surviving investor routes to impersonation
-Edit `beforeLoad` in each kept investor route (`app.investor.index`, `portfolio`, `portfolio.$holdingId`, `transactions`, `goals`, `tax`, `profile`):
-```ts
-const { user } = useAuthStore.getState();
-const impersonating = useImpersonationStore.getState().client;
-if (!impersonating) throw redirect({ to: ROLE_HOME[user.role] });
-```
-(Drops the "allow real investor" branch — there are no real investors in B2B.)
+### 2. Shared UI components — `src/features/onboarding/components/`
+- `invite-lead-dialog.tsx` — react-hook-form + Zod, single dialog reused by all roles. Generates a mock magic link on submit and copies to clipboard via toast.
+- `lead-detail-sheet.tsx` — slide-out Sheet with tabs:
+  - **Profile** (name, email, phone, PAN, source, owner, timestamps)
+  - **KYC checklist** — 6 rows (PAN, Aadhaar, Bank, Nominee, FATCA, e-Sign), each with status badge + action menu (mark submitted / verified / rejected). Auto-advances stage when thresholds met.
+  - **Activity** — timeline of stage changes (mocked from `updatedAt` history).
+  - Footer actions: Approve & convert, Reject (with reason), Reassign (Admin only).
+- `lead-kanban.tsx` — extracted from current RM onboarding page; 5 columns, draggable optional (skip drag for v1, use stage action menu on each card). Card click opens `lead-detail-sheet`.
+- `lead-table.tsx` — alternative tabular view with filters (stage, owner, source, date range), used by Admin.
+- `onboarding-stats.tsx` — 4 KPI cards (Total leads, In review, Verified MTD, Conversion %).
 
-### 3. Hide all write actions under impersonation
-Audit kept investor pages and remove/hide CTAs that no longer have a target:
-- Dashboard: drop "Invest now" / "Explore funds" buttons (already gated by `readOnly`, just clean dead links)
-- Portfolio + holding detail: drop "Invest more / Redeem / Switch" buttons
-- Goals: drop "New goal" + `GoalWizardDialog` mount → delete `src/features/goals/components/goal-wizard-dialog.tsx` + `src/features/goals/schemas.ts`
-- Profile: drop "Add bank / Add nominee" dialogs → delete `src/features/kyc/components/{add-bank-dialog,add-nominee-dialog}.tsx` + `src/features/kyc/schemas.ts`
+### 3. Routes
 
-Keep the read-only data displays (tables, charts, KYC timeline, bank list, nominee list).
+**RM** — rewrite `src/routes/app.rm.onboarding.tsx`:
+- `PageHeader` with "Invite client" button → `InviteLeadDialog`
+- `OnboardingStats` (scoped to current RM)
+- Tabs: **Kanban** (default) / **Table**
+- Both views scoped to `useLeadsQuery({ scope: "mine", ownerId: user.id })`
+- Card/row click → `LeadDetailSheet`
 
-### 4. Auth + nav cleanup
-- `src/types/auth.ts` — narrow `UserRole` to `"admin" | "rm" | "distributor"`
-- `src/features/auth/schemas.ts` — drop investor from `ROLE_OPTIONS`, delete `signupSchema`
-- `src/features/auth/api.ts` — drop `signup()` + `useSignupMutation()`, remove investor mock user
-- `src/features/auth/role-routes.ts` — drop `investor` key from `ROLE_HOME`
-- `src/config/navigation.ts` — remove `investorNav` entirely (sidebar never shows investor section; impersonated views are reached via RM client drill-down, not sidebar)
-- `src/routes/login.tsx` — drop investor option, remove "Create account" link
-- `src/routes/index.tsx` — rewrite as B2B partner landing (Admin / RM / Distributor strip, single CTA → `/login`)
+**Distributor** — new `src/routes/app.distributor.onboarding.tsx`:
+- Same layout as RM but scoped to distributor's leads
+- Add nav entry in `distributorNav` (`config/navigation.ts`): `{ label: "Onboarding", to: "/app/distributor/onboarding", icon: ShieldCheck }`
+- Update Distributor Overview to surface lead count
 
-### 5. RM → impersonation entry point
-Verify `src/routes/app.rm.clients.tsx` "View as client" action calls `useImpersonationStore.start(client)` then `navigate({ to: "/app/investor" })`. Same wiring usable from Admin Users page (add an action there too).
+**Admin** — new `src/routes/app.admin.onboarding.tsx`:
+- Platform-wide view, `useLeadsQuery({ scope: "all" })`
+- Filters: owner role (RM/Distributor), specific owner (combobox), stage, source, date range
+- Default to **Table** view (data density); Kanban available as toggle
+- Per-row actions: View, Reassign, Reject
+- Add nav entry in `adminNav` Operations section between Users and Reconciliation
 
-### 6. Add Reconciliation Module (missing B2B feature)
-- `src/types/reconciliation.ts` — `ReconciliationFile`, `ReconciliationError`
-- `src/features/reconciliation/{fixtures.ts, api.ts, schemas.ts}` — mock query/mutation hooks
-- `src/features/reconciliation/components/{upload-wizard.tsx, error-grid.tsx}`
-- `src/routes/app.admin.reconciliation.tsx` — files table + upload wizard + per-file error sheet
-- Already linked from `navigation.ts` admin section
+### 4. Conversion → impersonation handoff
+When a lead reaches `verified` and Admin/RM clicks **Approve & convert**:
+- Mock-create a `ClientLite` and add to `RM_CLIENTS_FIXTURE` in-memory
+- Toast: "Client created — open as client?"
+- Action button starts impersonation via `useImpersonationStore.start(client)` and navigates to `/app/investor`
+- Lead stage advances to `first_invest` once the impersonated session places a (mock) order — out of scope for v1, just mark `verified` → `first_invest` manually via stage menu.
+
+### 5. Notifications wiring
+Hook `useInviteLeadMutation` and `useAdvanceStageMutation` to push entries into existing `notifications` fixture (in-memory) so the bell shows "New lead invited" / "KYC verified for X". Reuse existing `useNotificationsQuery`.
+
+### 6. Cleanup
+- Update `src/types/rm.ts` to re-export `OnboardingLead` from `@/features/onboarding/types` (avoid duplication).
+- Drop the read-only Kanban inside `app.rm.onboarding.tsx` — replaced by new shared component.
 
 ## Files
 
-**Delete** (~15 files): signup, explore (×2), orders (×4), insights route, `features/{orders,schemes,insights}`, `features/goals/components/goal-wizard-dialog.tsx`, `features/goals/schemas.ts`, `features/kyc/components/add-{bank,nominee}-dialog.tsx`, `features/kyc/schemas.ts`, related types.
+**Create**
+- `src/features/onboarding/types.ts`
+- `src/features/onboarding/fixtures.ts`
+- `src/features/onboarding/api.ts`
+- `src/features/onboarding/schemas.ts`
+- `src/features/onboarding/components/invite-lead-dialog.tsx`
+- `src/features/onboarding/components/lead-detail-sheet.tsx`
+- `src/features/onboarding/components/lead-kanban.tsx`
+- `src/features/onboarding/components/lead-table.tsx`
+- `src/features/onboarding/components/onboarding-stats.tsx`
+- `src/routes/app.distributor.onboarding.tsx`
+- `src/routes/app.admin.onboarding.tsx`
 
-**Create**: `src/types/reconciliation.ts`, `src/features/reconciliation/{api.ts,fixtures.ts,schemas.ts}`, `src/features/reconciliation/components/{upload-wizard.tsx,error-grid.tsx}`, `src/routes/app.admin.reconciliation.tsx`.
-
-**Edit**: 7 surviving investor routes (tighten `beforeLoad`, strip write CTAs), `src/routes/{index,login}.tsx`, `src/types/auth.ts`, `src/features/auth/{schemas,api,role-routes}.ts`, `src/config/navigation.ts`, `src/routes/app.rm.clients.tsx` (verify impersonation wiring), `src/routes/app.admin.users.tsx` (add "View as" action).
+**Edit**
+- `src/routes/app.rm.onboarding.tsx` — replace with shared components
+- `src/config/navigation.ts` — add Distributor + Admin Onboarding entries
+- `src/types/rm.ts` — re-export from onboarding types
+- `src/features/rm/fixtures.ts` — drop `RM_LEADS_FIXTURE` (or keep as re-export)
+- `src/features/rm/api.ts` — `useRmLeadsQuery` becomes a thin wrapper over `useLeadsQuery({ scope: "mine" })`
 
 ## Verification
-
-- `/login` shows only Admin / RM / Distributor
-- `/signup`, `/app/investor/explore*`, `/app/investor/orders/*`, `/app/investor/insights` → 404
-- Sidebar never shows investor entries
-- RM → Clients → "View as client" → lands on `/app/investor` with banner, all write CTAs hidden, charts + tables render
-- Direct visit to `/app/investor` without impersonation → redirects to role home
-- `/app/admin/reconciliation` → upload wizard + files grid + error drill-down all work (mock)
-- `bun run build` passes; no leftover imports to deleted modules
+- RM `/app/rm/onboarding` shows Kanban + "Invite client" works end-to-end (toast with magic link)
+- Click any card → sheet opens, flipping all 6 KYC items to "verified" auto-advances stage to `verified`
+- "Approve & convert" creates a client, toast offers impersonation, RM lands on `/app/investor` with banner
+- Distributor `/app/distributor/onboarding` mirrors RM scoped to distributor's own leads
+- Admin `/app/admin/onboarding` sees all leads, can filter by owner role, reassign a lead's owner, reject with reason
+- Sidebar shows new entries for Distributor and Admin
+- Notifications bell increments on invite / verification events
+- `bun run build` passes
 
