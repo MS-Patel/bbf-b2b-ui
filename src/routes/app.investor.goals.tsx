@@ -26,6 +26,7 @@ import { StatGridSkeleton, ChartSkeleton } from "@/components/feedback/skeletons
 
 import { useGoalsOverviewQuery } from "@/features/goals/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatCompactINR, formatINR, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -34,7 +35,8 @@ import type { Goal, GoalCategory, GoalPriority, GoalStatus, GoalsSummary } from 
 export const Route = createFileRoute("/app/investor/goals")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (user && !impersonating) throw redirect({ to: ROLE_HOME[user.role] });
   },
   head: () => ({ meta: [{ title: "Goals — BuyBestFin" }] }),
   component: GoalsPage,
