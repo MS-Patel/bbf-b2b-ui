@@ -1,29 +1,27 @@
-import { useMemo, useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { CreditCard, Mail, MapPin, Phone, Plus, ShieldCheck, UserPlus } from "lucide-react";
+import { CreditCard, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge, type StatusTone } from "@/components/feedback/status-badge";
 import { ChartSkeleton } from "@/components/feedback/skeletons";
 import { KycTimeline } from "@/features/kyc/components/kyc-timeline";
-import { AddBankDialog } from "@/features/kyc/components/add-bank-dialog";
-import { AddNomineeDialog } from "@/features/kyc/components/add-nominee-dialog";
 import { useKycOverviewQuery } from "@/features/kyc/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { BankAccount, KycOverallStatus, Nominee } from "@/types/kyc";
+import type { KycOverallStatus } from "@/types/kyc";
 
 export const Route = createFileRoute("/app/investor/profile")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "KYC & Profile — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "KYC & Profile — Read-only" }] }),
   component: ProfilePage,
 });
 
@@ -44,30 +42,16 @@ const STATUS_LABEL: Record<KycOverallStatus, string> = {
 
 function ProfilePage() {
   const { data, isLoading } = useKycOverviewQuery();
-  const [bankOpen, setBankOpen] = useState(false);
-  const [nomineeOpen, setNomineeOpen] = useState(false);
-  const [extraBanks, setExtraBanks] = useState<BankAccount[]>([]);
-  const [extraNominees, setExtraNominees] = useState<Nominee[]>([]);
-
-  const banks = useMemo<BankAccount[]>(
-    () => [...(data?.bankAccounts ?? []), ...extraBanks],
-    [data?.bankAccounts, extraBanks],
-  );
-  const nominees = useMemo<Nominee[]>(
-    () => [...(data?.nominees ?? []), ...extraNominees],
-    [data?.nominees, extraNominees],
-  );
-  const totalShare = useMemo(
-    () => nominees.reduce((sum, n) => sum + n.sharePct, 0),
-    [nominees],
-  );
+  const banks = data?.bankAccounts ?? [];
+  const nominees = data?.nominees ?? [];
+  const totalShare = nominees.reduce((sum, n) => sum + n.sharePct, 0);
 
   return (
     <>
       <PageHeader
         eyebrow="Account"
         title="KYC & Profile"
-        description="Manage your KYC, bank accounts, and nominee details — all required for investing on BSE Star MF."
+        description="Read-only view of this client's KYC status, bank accounts, and nominees."
       />
 
       <div className="space-y-6 px-6 py-6 sm:px-8">
@@ -95,11 +79,9 @@ function ProfilePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="border-0 bg-success/12 text-success">
-                    BSE-ready
-                  </Badge>
-                </div>
+                <Badge variant="secondary" className="border-0 bg-success/12 text-success">
+                  BSE-ready
+                </Badge>
               </CardContent>
             </Card>
 
@@ -116,7 +98,7 @@ function ProfilePage() {
                   <CardHeader>
                     <CardTitle>NDML KYC progress</CardTitle>
                     <CardDescription>
-                      Step-by-step status of your KYC application. Each step is independently audited.
+                      Step-by-step status of the KYC application.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-6 pb-6">
@@ -129,7 +111,7 @@ function ProfilePage() {
                 <Card className="shadow-card">
                   <CardHeader>
                     <CardTitle>Personal details</CardTitle>
-                    <CardDescription>Information on file with your KYC provider.</CardDescription>
+                    <CardDescription>Information on file with the KYC provider.</CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-x-8 gap-y-5 p-6 sm:grid-cols-2">
                     <Field label="PAN" value={data.profile.panMasked} mono />
@@ -154,18 +136,9 @@ function ProfilePage() {
               </TabsContent>
 
               <TabsContent value="banks" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-base font-semibold">Linked bank accounts</h3>
-                    <p className="text-sm text-muted-foreground">Used for purchases, SIPs, and redemption credits.</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="gap-2"
-                    onClick={() => setBankOpen(true)}
-                  >
-                    <Plus className="h-4 w-4" /> Add bank
-                  </Button>
+                <div>
+                  <h3 className="text-base font-semibold">Linked bank accounts</h3>
+                  <p className="text-sm text-muted-foreground">Used for purchases, SIPs, and redemption credits.</p>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
                   {banks.map((b) => (
@@ -200,21 +173,11 @@ function ProfilePage() {
               </TabsContent>
 
               <TabsContent value="nominees" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-base font-semibold">Registered nominees</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Total share: <span className="font-semibold text-foreground">{totalShare}%</span> of 100%.
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="gap-2"
-                    onClick={() => setNomineeOpen(true)}
-                    disabled={totalShare >= 100}
-                  >
-                    <UserPlus className="h-4 w-4" /> Add nominee
-                  </Button>
+                <div>
+                  <h3 className="text-base font-semibold">Registered nominees</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Total share: <span className="font-semibold text-foreground">{totalShare}%</span> of 100%.
+                  </p>
                 </div>
                 <div className="grid gap-3 lg:grid-cols-2">
                   {nominees.map((n) => (
@@ -239,17 +202,6 @@ function ProfilePage() {
           </>
         )}
       </div>
-      <AddBankDialog
-        open={bankOpen}
-        onOpenChange={setBankOpen}
-        onAdd={(b) => setExtraBanks((prev) => [...prev, b])}
-      />
-      <AddNomineeDialog
-        open={nomineeOpen}
-        onOpenChange={setNomineeOpen}
-        currentShareTotal={totalShare}
-        onAdd={(n) => setExtraNominees((prev) => [...prev, n])}
-      />
     </>
   );
 }

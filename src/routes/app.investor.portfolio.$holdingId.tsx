@@ -20,6 +20,7 @@ import { StatusBadge, type StatusTone } from "@/components/feedback/status-badge
 import { useHoldingsQuery } from "@/features/portfolio/api";
 import { useTransactionsQuery } from "@/features/transactions/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatCompactINR, formatDate, formatINR, formatPercent } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -31,9 +32,10 @@ import type { Transaction, TransactionStatus, TransactionType } from "@/types/tr
 export const Route = createFileRoute("/app/investor/portfolio/$holdingId")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Holding details — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "Holding details — Read-only" }] }),
   component: HoldingDetailPage,
   notFoundComponent: () => (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 p-6 text-center">
@@ -107,21 +109,6 @@ function HoldingDetailPage() {
               <Button asChild variant="outline" className="gap-2">
                 <Link to="/app/investor/portfolio">
                   <ArrowLeft className="h-4 w-4" /> Portfolio
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="gap-2">
-                <Link to="/app/investor/orders/redeem" search={{ holdingId: holding.id }}>
-                  <ArrowDownToLine className="h-4 w-4" /> Redeem
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="gap-2">
-                <Link to="/app/investor/orders/switch" search={{ fromHoldingId: holding.id }}>
-                  <Repeat2 className="h-4 w-4" /> Switch
-                </Link>
-              </Button>
-              <Button asChild className="gap-2">
-                <Link to="/app/investor/orders/lumpsum" search={{ schemeId: holding.schemeCode }}>
-                  Invest more <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>

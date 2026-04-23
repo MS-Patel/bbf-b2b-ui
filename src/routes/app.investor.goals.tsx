@@ -264,15 +264,6 @@ function GoalCard({ goal }: { goal: Goal }) {
             ))}
           </div>
         )}
-
-        <div className="flex gap-2 border-t border-border pt-3">
-          <Button asChild size="sm" variant="outline" className="flex-1">
-            <Link to="/app/investor/orders/sip">Top-up SIP</Link>
-          </Button>
-          <Button asChild size="sm" variant="ghost" className="flex-1">
-            <Link to="/app/investor/portfolio">View funds</Link>
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

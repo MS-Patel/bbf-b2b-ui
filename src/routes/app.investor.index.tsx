@@ -19,40 +19,23 @@ export const Route = createFileRoute("/app/investor/")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
     const impersonating = useImpersonationStore.getState().client;
-    // Allow RM/Distributor through when impersonating an investor
-    if (user && user.role !== "investor" && !impersonating) throw redirect({ to: ROLE_HOME[user.role] });
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Investor dashboard — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "Client portfolio — Read-only" }] }),
   component: InvestorDashboard,
 });
 
 function InvestorDashboard() {
-  const user = useAuthStore((s) => s.user);
   const impersonating = useImpersonationStore((s) => s.client);
   const { data, isLoading } = usePortfolioOverviewQuery();
-  const displayName = impersonating?.fullName ?? user?.fullName ?? "Investor";
-  const readOnly = !!impersonating;
+  const displayName = impersonating?.fullName ?? "Client";
 
   return (
     <>
       <PageHeader
-        eyebrow={readOnly ? `Read-only · ${displayName}` : `Welcome back, ${displayName.split(" ")[0]}`}
-        title="Your wealth, at a glance"
-        description="Track holdings, run SIPs, and execute orders on BSE Star MF — all in one place."
-        actions={
-          readOnly ? null : (
-            <>
-              <Button asChild variant="outline">
-                <Link to="/app/investor/explore">Explore funds</Link>
-              </Button>
-              <Button asChild className="gap-2">
-                <Link to="/app/investor/orders/lumpsum">
-                  Invest now <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </>
-          )
-        }
+        eyebrow={`Read-only · ${displayName}`}
+        title="Client portfolio at a glance"
+        description="View this client's holdings, allocation, and performance exactly as they see it."
       />
       <div className="space-y-6 px-6 py-6 sm:px-8">
         {isLoading || !data ? (
@@ -108,7 +91,7 @@ function InvestorDashboard() {
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle>Top holdings</CardTitle>
-                  <CardDescription>Your largest positions by current value.</CardDescription>
+                  <CardDescription>The largest positions by current value.</CardDescription>
                 </div>
                 <Button asChild variant="ghost" size="sm" className="gap-1">
                   <Link to="/app/investor/portfolio">

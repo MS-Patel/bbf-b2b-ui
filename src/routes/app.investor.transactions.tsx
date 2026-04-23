@@ -18,6 +18,7 @@ import { DataTable, type DataTableColumn } from "@/components/data/data-table";
 import { StatusBadge, type StatusTone } from "@/components/feedback/status-badge";
 import { useTransactionsQuery } from "@/features/transactions/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatDate, formatINR } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -26,9 +27,10 @@ import type { Transaction, TransactionStatus, TransactionType } from "@/types/tr
 export const Route = createFileRoute("/app/investor/transactions")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Transactions — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "Transactions — Read-only" }] }),
   component: TransactionsPage,
 });
 

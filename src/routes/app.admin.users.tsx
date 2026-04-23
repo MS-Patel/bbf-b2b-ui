@@ -140,7 +140,7 @@ function AdminUsersPage() {
       <PageHeader
         eyebrow="Admin · Users"
         title="Users & roles"
-        description={`${data?.length ?? 0} accounts across investors, RMs, and distributors.`}
+        description={`${data?.length ?? 0} platform accounts across admins, RMs, and distributors.`}
       />
       <div className="space-y-5 px-6 py-6 sm:px-8">
         <Card className="shadow-card">
@@ -158,7 +158,6 @@ function AdminUsersPage() {
               <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Role" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All roles</SelectItem>
-                <SelectItem value="investor">Investor</SelectItem>
                 <SelectItem value="rm">RM</SelectItem>
                 <SelectItem value="distributor">Distributor</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>

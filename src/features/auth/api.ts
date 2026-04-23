@@ -11,7 +11,7 @@ import type {
 } from "@/types/auth";
 
 /**
- * Auth API surface.
+ * Auth API surface (B2B-only).
  *
  * NOTE: While VITE_USE_MOCK_API is enabled (default in development), all
  * functions resolve with deterministic mock data. To wire up the real DRF
@@ -19,15 +19,6 @@ import type {
  */
 
 const MOCK_USERS: Record<UserRole, User> = {
-  investor: {
-    id: "usr_investor_001",
-    email: "investor@buybestfin.dev",
-    fullName: "Aanya Sharma",
-    role: "investor",
-    kycStatus: "verified",
-    phone: "+91 98765 43210",
-    createdAt: "2023-04-12T10:00:00Z",
-  },
   admin: {
     id: "usr_admin_001",
     email: "admin@buybestfin.dev",
@@ -66,13 +57,6 @@ export interface AuthResult {
   tokens: AuthTokens;
 }
 
-export interface SignupPayload {
-  fullName: string;
-  email: string;
-  mobile: string;
-  password: string;
-}
-
 export const authApi = {
   async login(credentials: LoginCredentials): Promise<AuthResult> {
     if (env.USE_MOCK_API) {
@@ -83,23 +67,6 @@ export const authApi = {
       return { user: { ...MOCK_USERS[credentials.role], email: credentials.email }, tokens: MOCK_TOKENS };
     }
     return api.post<AuthResult, LoginCredentials>("/auth/login/", credentials);
-  },
-
-  async signup(payload: SignupPayload): Promise<AuthResult> {
-    if (env.USE_MOCK_API) {
-      await wait(900);
-      const user: User = {
-        ...MOCK_USERS.investor,
-        id: `usr_investor_${Date.now()}`,
-        email: payload.email,
-        fullName: payload.fullName,
-        phone: payload.mobile,
-        kycStatus: "not_started",
-        createdAt: new Date().toISOString(),
-      };
-      return { user, tokens: MOCK_TOKENS };
-    }
-    return api.post<AuthResult, SignupPayload>("/auth/signup/", payload);
   },
 
   async loginWithOtp(payload: OtpLoginPayload): Promise<AuthResult> {
@@ -142,10 +109,6 @@ export const authApi = {
 
 export function useLoginMutation() {
   return useMutation({ mutationFn: (c: LoginCredentials) => authApi.login(c) });
-}
-
-export function useSignupMutation() {
-  return useMutation({ mutationFn: (p: SignupPayload) => authApi.signup(p) });
 }
 
 export function useOtpLoginMutation() {
