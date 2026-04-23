@@ -10,6 +10,7 @@ import { SectorBarChart } from "@/features/portfolio/components/sector-bar-chart
 import { HoldingsTable } from "@/features/portfolio/components/holdings-table";
 import { usePortfolioOverviewQuery, useHoldingsQuery } from "@/features/portfolio/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatCompactINR, formatINR, formatPercent } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -18,9 +19,10 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 export const Route = createFileRoute("/app/investor/portfolio")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Portfolio — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "Portfolio — Read-only" }] }),
   component: PortfolioPage,
 });
 

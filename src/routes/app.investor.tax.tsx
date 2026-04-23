@@ -14,6 +14,7 @@ import { ChartSkeleton, StatGridSkeleton } from "@/components/feedback/skeletons
 
 import { simulateHarvest, useTaxOverviewQuery } from "@/features/tax/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { useImpersonationStore } from "@/features/impersonation/store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatCompactINR, formatDate, formatINR, formatPercent } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -22,9 +23,10 @@ import type { GainTerm, TaxBucket, TaxLot, TaxOverview } from "@/types/tax";
 export const Route = createFileRoute("/app/investor/tax")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (!impersonating && user) throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Tax Harvesting — BuyBestFin" }] }),
+  head: () => ({ meta: [{ title: "Tax view — Read-only" }] }),
   component: TaxPage,
 });
 
