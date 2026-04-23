@@ -13,7 +13,7 @@ export function ImpersonationBanner() {
 
   if (!client) return null;
 
-  const exitTo = role && role !== "investor" ? ROLE_HOME[role] : "/app/investor";
+  const exitTo = role ? ROLE_HOME[role] : "/login";
 
   return (
     <div className="sticky top-0 z-40 border-b border-warning/30 bg-warning/10 backdrop-blur supports-[backdrop-filter]:bg-warning/10">

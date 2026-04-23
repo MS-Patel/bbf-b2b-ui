@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
@@ -27,27 +26,16 @@ import { Route as AppInvestorTransactionsRouteImport } from './routes/app.invest
 import { Route as AppInvestorTaxRouteImport } from './routes/app.investor.tax'
 import { Route as AppInvestorProfileRouteImport } from './routes/app.investor.profile'
 import { Route as AppInvestorPortfolioRouteImport } from './routes/app.investor.portfolio'
-import { Route as AppInvestorInsightsRouteImport } from './routes/app.investor.insights'
 import { Route as AppInvestorGoalsRouteImport } from './routes/app.investor.goals'
-import { Route as AppInvestorExploreRouteImport } from './routes/app.investor.explore'
 import { Route as AppDistributorCommissionsRouteImport } from './routes/app.distributor.commissions'
 import { Route as AppDistributorAumRouteImport } from './routes/app.distributor.aum'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
 import { Route as AppAdminSystemRouteImport } from './routes/app.admin.system'
+import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.reconciliation'
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
 import { Route as AppInvestorPortfolioHoldingIdRouteImport } from './routes/app.investor.portfolio.$holdingId'
-import { Route as AppInvestorOrdersSwitchRouteImport } from './routes/app.investor.orders.switch'
-import { Route as AppInvestorOrdersSipRouteImport } from './routes/app.investor.orders.sip'
-import { Route as AppInvestorOrdersRedeemRouteImport } from './routes/app.investor.orders.redeem'
-import { Route as AppInvestorOrdersLumpsumRouteImport } from './routes/app.investor.orders.lumpsum'
-import { Route as AppInvestorExploreSchemeIdRouteImport } from './routes/app.investor.explore.$schemeId'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -133,19 +121,9 @@ const AppInvestorPortfolioRoute = AppInvestorPortfolioRouteImport.update({
   path: '/investor/portfolio',
   getParentRoute: () => AppRoute,
 } as any)
-const AppInvestorInsightsRoute = AppInvestorInsightsRouteImport.update({
-  id: '/investor/insights',
-  path: '/investor/insights',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppInvestorGoalsRoute = AppInvestorGoalsRouteImport.update({
   id: '/investor/goals',
   path: '/investor/goals',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInvestorExploreRoute = AppInvestorExploreRouteImport.update({
-  id: '/investor/explore',
-  path: '/investor/explore',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDistributorCommissionsRoute =
@@ -169,6 +147,11 @@ const AppAdminSystemRoute = AppAdminSystemRouteImport.update({
   path: '/admin/system',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminReconciliationRoute = AppAdminReconciliationRouteImport.update({
+  id: '/admin/reconciliation',
+  path: '/admin/reconciliation',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminPayoutsRoute = AppAdminPayoutsRouteImport.update({
   id: '/admin/payouts',
   path: '/admin/payouts',
@@ -185,51 +168,22 @@ const AppInvestorPortfolioHoldingIdRoute =
     path: '/$holdingId',
     getParentRoute: () => AppInvestorPortfolioRoute,
   } as any)
-const AppInvestorOrdersSwitchRoute = AppInvestorOrdersSwitchRouteImport.update({
-  id: '/investor/orders/switch',
-  path: '/investor/orders/switch',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInvestorOrdersSipRoute = AppInvestorOrdersSipRouteImport.update({
-  id: '/investor/orders/sip',
-  path: '/investor/orders/sip',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInvestorOrdersRedeemRoute = AppInvestorOrdersRedeemRouteImport.update({
-  id: '/investor/orders/redeem',
-  path: '/investor/orders/redeem',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInvestorOrdersLumpsumRoute =
-  AppInvestorOrdersLumpsumRouteImport.update({
-    id: '/investor/orders/lumpsum',
-    path: '/investor/orders/lumpsum',
-    getParentRoute: () => AppRoute,
-  } as any)
-const AppInvestorExploreSchemeIdRoute =
-  AppInvestorExploreSchemeIdRouteImport.update({
-    id: '/$schemeId',
-    path: '/$schemeId',
-    getParentRoute: () => AppInvestorExploreRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
-  '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
@@ -241,11 +195,6 @@ export interface FileRoutesByFullPath {
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
-  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
-  '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
-  '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
-  '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
-  '/app/investor/orders/switch': typeof AppInvestorOrdersSwitchRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
 }
 export interface FileRoutesByTo {
@@ -253,18 +202,16 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
-  '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
@@ -276,11 +223,6 @@ export interface FileRoutesByTo {
   '/app/distributor': typeof AppDistributorIndexRoute
   '/app/investor': typeof AppInvestorIndexRoute
   '/app/rm': typeof AppRmIndexRoute
-  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
-  '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
-  '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
-  '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
-  '/app/investor/orders/switch': typeof AppInvestorOrdersSwitchRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
 }
 export interface FileRoutesById {
@@ -289,18 +231,16 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/investor/explore': typeof AppInvestorExploreRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
-  '/app/investor/insights': typeof AppInvestorInsightsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
@@ -312,11 +252,6 @@ export interface FileRoutesById {
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
-  '/app/investor/explore/$schemeId': typeof AppInvestorExploreSchemeIdRoute
-  '/app/investor/orders/lumpsum': typeof AppInvestorOrdersLumpsumRoute
-  '/app/investor/orders/redeem': typeof AppInvestorOrdersRedeemRoute
-  '/app/investor/orders/sip': typeof AppInvestorOrdersSipRoute
-  '/app/investor/orders/switch': typeof AppInvestorOrdersSwitchRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
 }
 export interface FileRouteTypes {
@@ -326,18 +261,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
-    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
     | '/app/admin/payouts'
+    | '/app/admin/reconciliation'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
-    | '/app/investor/explore'
     | '/app/investor/goals'
-    | '/app/investor/insights'
     | '/app/investor/portfolio'
     | '/app/investor/profile'
     | '/app/investor/tax'
@@ -349,11 +282,6 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
-    | '/app/investor/explore/$schemeId'
-    | '/app/investor/orders/lumpsum'
-    | '/app/investor/orders/redeem'
-    | '/app/investor/orders/sip'
-    | '/app/investor/orders/switch'
     | '/app/investor/portfolio/$holdingId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -361,18 +289,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
-    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
     | '/app/admin/payouts'
+    | '/app/admin/reconciliation'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
-    | '/app/investor/explore'
     | '/app/investor/goals'
-    | '/app/investor/insights'
     | '/app/investor/portfolio'
     | '/app/investor/profile'
     | '/app/investor/tax'
@@ -384,11 +310,6 @@ export interface FileRouteTypes {
     | '/app/distributor'
     | '/app/investor'
     | '/app/rm'
-    | '/app/investor/explore/$schemeId'
-    | '/app/investor/orders/lumpsum'
-    | '/app/investor/orders/redeem'
-    | '/app/investor/orders/sip'
-    | '/app/investor/orders/switch'
     | '/app/investor/portfolio/$holdingId'
   id:
     | '__root__'
@@ -396,18 +317,16 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/login'
-    | '/signup'
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/commissions'
     | '/app/admin/payouts'
+    | '/app/admin/reconciliation'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
-    | '/app/investor/explore'
     | '/app/investor/goals'
-    | '/app/investor/insights'
     | '/app/investor/portfolio'
     | '/app/investor/profile'
     | '/app/investor/tax'
@@ -419,11 +338,6 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
-    | '/app/investor/explore/$schemeId'
-    | '/app/investor/orders/lumpsum'
-    | '/app/investor/orders/redeem'
-    | '/app/investor/orders/sip'
-    | '/app/investor/orders/switch'
     | '/app/investor/portfolio/$holdingId'
   fileRoutesById: FileRoutesById
 }
@@ -432,18 +346,10 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -563,25 +469,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInvestorPortfolioRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/investor/insights': {
-      id: '/app/investor/insights'
-      path: '/investor/insights'
-      fullPath: '/app/investor/insights'
-      preLoaderRoute: typeof AppInvestorInsightsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/investor/goals': {
       id: '/app/investor/goals'
       path: '/investor/goals'
       fullPath: '/app/investor/goals'
       preLoaderRoute: typeof AppInvestorGoalsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investor/explore': {
-      id: '/app/investor/explore'
-      path: '/investor/explore'
-      fullPath: '/app/investor/explore'
-      preLoaderRoute: typeof AppInvestorExploreRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/distributor/commissions': {
@@ -612,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminSystemRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/reconciliation': {
+      id: '/app/admin/reconciliation'
+      path: '/admin/reconciliation'
+      fullPath: '/app/admin/reconciliation'
+      preLoaderRoute: typeof AppAdminReconciliationRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/payouts': {
       id: '/app/admin/payouts'
       path: '/admin/payouts'
@@ -633,54 +532,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInvestorPortfolioHoldingIdRouteImport
       parentRoute: typeof AppInvestorPortfolioRoute
     }
-    '/app/investor/orders/switch': {
-      id: '/app/investor/orders/switch'
-      path: '/investor/orders/switch'
-      fullPath: '/app/investor/orders/switch'
-      preLoaderRoute: typeof AppInvestorOrdersSwitchRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investor/orders/sip': {
-      id: '/app/investor/orders/sip'
-      path: '/investor/orders/sip'
-      fullPath: '/app/investor/orders/sip'
-      preLoaderRoute: typeof AppInvestorOrdersSipRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investor/orders/redeem': {
-      id: '/app/investor/orders/redeem'
-      path: '/investor/orders/redeem'
-      fullPath: '/app/investor/orders/redeem'
-      preLoaderRoute: typeof AppInvestorOrdersRedeemRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investor/orders/lumpsum': {
-      id: '/app/investor/orders/lumpsum'
-      path: '/investor/orders/lumpsum'
-      fullPath: '/app/investor/orders/lumpsum'
-      preLoaderRoute: typeof AppInvestorOrdersLumpsumRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/investor/explore/$schemeId': {
-      id: '/app/investor/explore/$schemeId'
-      path: '/$schemeId'
-      fullPath: '/app/investor/explore/$schemeId'
-      preLoaderRoute: typeof AppInvestorExploreSchemeIdRouteImport
-      parentRoute: typeof AppInvestorExploreRoute
-    }
   }
 }
-
-interface AppInvestorExploreRouteChildren {
-  AppInvestorExploreSchemeIdRoute: typeof AppInvestorExploreSchemeIdRoute
-}
-
-const AppInvestorExploreRouteChildren: AppInvestorExploreRouteChildren = {
-  AppInvestorExploreSchemeIdRoute: AppInvestorExploreSchemeIdRoute,
-}
-
-const AppInvestorExploreRouteWithChildren =
-  AppInvestorExploreRoute._addFileChildren(AppInvestorExploreRouteChildren)
 
 interface AppInvestorPortfolioRouteChildren {
   AppInvestorPortfolioHoldingIdRoute: typeof AppInvestorPortfolioHoldingIdRoute
@@ -698,13 +551,12 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
+  AppAdminReconciliationRoute: typeof AppAdminReconciliationRoute
   AppAdminSystemRoute: typeof AppAdminSystemRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
   AppDistributorCommissionsRoute: typeof AppDistributorCommissionsRoute
-  AppInvestorExploreRoute: typeof AppInvestorExploreRouteWithChildren
   AppInvestorGoalsRoute: typeof AppInvestorGoalsRoute
-  AppInvestorInsightsRoute: typeof AppInvestorInsightsRoute
   AppInvestorPortfolioRoute: typeof AppInvestorPortfolioRouteWithChildren
   AppInvestorProfileRoute: typeof AppInvestorProfileRoute
   AppInvestorTaxRoute: typeof AppInvestorTaxRoute
@@ -716,10 +568,6 @@ interface AppRouteChildren {
   AppDistributorIndexRoute: typeof AppDistributorIndexRoute
   AppInvestorIndexRoute: typeof AppInvestorIndexRoute
   AppRmIndexRoute: typeof AppRmIndexRoute
-  AppInvestorOrdersLumpsumRoute: typeof AppInvestorOrdersLumpsumRoute
-  AppInvestorOrdersRedeemRoute: typeof AppInvestorOrdersRedeemRoute
-  AppInvestorOrdersSipRoute: typeof AppInvestorOrdersSipRoute
-  AppInvestorOrdersSwitchRoute: typeof AppInvestorOrdersSwitchRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -727,13 +575,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
+  AppAdminReconciliationRoute: AppAdminReconciliationRoute,
   AppAdminSystemRoute: AppAdminSystemRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
   AppDistributorCommissionsRoute: AppDistributorCommissionsRoute,
-  AppInvestorExploreRoute: AppInvestorExploreRouteWithChildren,
   AppInvestorGoalsRoute: AppInvestorGoalsRoute,
-  AppInvestorInsightsRoute: AppInvestorInsightsRoute,
   AppInvestorPortfolioRoute: AppInvestorPortfolioRouteWithChildren,
   AppInvestorProfileRoute: AppInvestorProfileRoute,
   AppInvestorTaxRoute: AppInvestorTaxRoute,
@@ -745,10 +592,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppDistributorIndexRoute: AppDistributorIndexRoute,
   AppInvestorIndexRoute: AppInvestorIndexRoute,
   AppRmIndexRoute: AppRmIndexRoute,
-  AppInvestorOrdersLumpsumRoute: AppInvestorOrdersLumpsumRoute,
-  AppInvestorOrdersRedeemRoute: AppInvestorOrdersRedeemRoute,
-  AppInvestorOrdersSipRoute: AppInvestorOrdersSipRoute,
-  AppInvestorOrdersSwitchRoute: AppInvestorOrdersSwitchRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -758,7 +601,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

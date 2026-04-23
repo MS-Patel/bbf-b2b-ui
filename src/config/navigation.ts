@@ -1,22 +1,14 @@
 import {
   LayoutDashboard,
-  PieChart,
   Wallet,
-  Repeat2,
-  ReceiptText,
   ShieldCheck,
   Users,
   FileSpreadsheet,
   Activity,
   HandCoins,
   Briefcase,
-  Target,
-  Sparkles,
-  Calculator,
   Bell,
   Settings,
-  Compass,
-  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 import type { UserRole } from "@/types/auth";
@@ -32,39 +24,6 @@ export interface NavSection {
   label: string;
   items: NavItem[];
 }
-
-const investorNav: NavSection[] = [
-  {
-    label: "Overview",
-    items: [
-      { label: "Dashboard", to: "/app/investor", icon: LayoutDashboard },
-      { label: "Portfolio", to: "/app/investor/portfolio", icon: PieChart },
-      { label: "Transactions", to: "/app/investor/transactions", icon: ReceiptText },
-    ],
-  },
-  {
-    label: "Invest",
-    items: [
-      { label: "Explore Schemes", to: "/app/investor/explore", icon: Compass },
-      { label: "Lumpsum", to: "/app/investor/orders/lumpsum", icon: TrendingUp },
-      { label: "SIP", to: "/app/investor/orders/sip", icon: Wallet },
-      { label: "Redeem", to: "/app/investor/orders/redeem", icon: Wallet },
-      { label: "Switch", to: "/app/investor/orders/switch", icon: Repeat2 },
-    ],
-  },
-  {
-    label: "Plan",
-    items: [
-      { label: "Goals", to: "/app/investor/goals", icon: Target },
-      { label: "Tax Harvesting", to: "/app/investor/tax", icon: Calculator },
-      { label: "AI Insights", to: "/app/investor/insights", icon: Sparkles, badge: "Beta" },
-    ],
-  },
-  {
-    label: "Account",
-    items: [{ label: "KYC & Profile", to: "/app/investor/profile", icon: ShieldCheck }],
-  },
-];
 
 const adminNav: NavSection[] = [
   {
@@ -115,7 +74,6 @@ const distributorNav: NavSection[] = [
 ];
 
 export const NAV_BY_ROLE: Record<UserRole, NavSection[]> = {
-  investor: investorNav,
   admin: adminNav,
   rm: rmNav,
   distributor: distributorNav,
