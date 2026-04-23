@@ -42,32 +42,6 @@ function buildClients(): ClientLite[] {
 }
 export const RM_CLIENTS_FIXTURE: ClientLite[] = buildClients();
 
-const STAGES: LeadStage[] = ["lead", "kyc_started", "kyc_in_review", "verified", "first_invest"];
-const SOURCES = ["Referral", "Website", "Campaign", "RM Direct"] as const;
-
-function buildLeads(): OnboardingLead[] {
-  const r = seeded(202);
-  const out: OnboardingLead[] = [];
-  for (let i = 0; i < 28; i++) {
-    const fn = FIRST[Math.floor(r() * FIRST.length)]!;
-    const ln = LAST[Math.floor(r() * LAST.length)]!;
-    const created = new Date("2026-04-16");
-    created.setDate(created.getDate() - Math.floor(r() * 30));
-    const updated = new Date(created);
-    updated.setDate(updated.getDate() + Math.floor(r() * 5));
-    out.push({
-      id: `ld_${i.toString().padStart(4, "0")}`,
-      fullName: `${fn} ${ln}`,
-      email: `${fn.toLowerCase()}.${ln.toLowerCase()}@lead.in`,
-      stage: STAGES[Math.floor(r() * STAGES.length)]!,
-      source: SOURCES[Math.floor(r() * SOURCES.length)]!,
-      createdAt: created.toISOString(),
-      updatedAt: updated.toISOString(),
-    });
-  }
-  return out;
-}
-export const RM_LEADS_FIXTURE: OnboardingLead[] = buildLeads();
 
 function buildEarnings(): RmEarnings {
   const r = seeded(303);
