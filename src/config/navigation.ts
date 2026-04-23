@@ -31,6 +31,7 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Overview", to: "/app/admin", icon: LayoutDashboard },
       { label: "Users & Roles", to: "/app/admin/users", icon: Users },
+      { label: "Onboarding", to: "/app/admin/onboarding", icon: ShieldCheck },
       { label: "Reconciliation", to: "/app/admin/reconciliation", icon: FileSpreadsheet },
     ],
   },
@@ -67,6 +68,7 @@ const distributorNav: NavSection[] = [
     label: "Business",
     items: [
       { label: "Overview", to: "/app/distributor", icon: LayoutDashboard },
+      { label: "Onboarding", to: "/app/distributor/onboarding", icon: ShieldCheck },
       { label: "AUM", to: "/app/distributor/aum", icon: Briefcase },
       { label: "Commissions", to: "/app/distributor/commissions", icon: HandCoins },
     ],

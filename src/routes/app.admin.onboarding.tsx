@@ -1,67 +1,53 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
-import { UserPlus } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuthStore } from "@/stores/auth-store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { useLeadsQuery } from "@/features/onboarding/api";
-import { InviteLeadDialog } from "@/features/onboarding/components/invite-lead-dialog";
 import { LeadKanban } from "@/features/onboarding/components/lead-kanban";
 import { LeadTable } from "@/features/onboarding/components/lead-table";
 import { LeadDetailSheet } from "@/features/onboarding/components/lead-detail-sheet";
 import { OnboardingStats } from "@/features/onboarding/components/onboarding-stats";
 import type { OnboardingLead } from "@/features/onboarding/types";
 
-export const Route = createFileRoute("/app/rm/onboarding")({
+export const Route = createFileRoute("/app/admin/onboarding")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "rm") throw redirect({ to: ROLE_HOME[user.role] });
+    if (user && user.role !== "admin") throw redirect({ to: ROLE_HOME[user.role] });
   },
-  head: () => ({ meta: [{ title: "Onboarding — RM" }] }),
-  component: RmOnboardingPage,
+  head: () => ({ meta: [{ title: "Onboarding — Admin" }] }),
+  component: AdminOnboardingPage,
 });
 
-function RmOnboardingPage() {
-  const user = useAuthStore((s) => s.user);
-  const { data } = useLeadsQuery({ scope: "mine", ownerId: user?.id });
+function AdminOnboardingPage() {
+  const { data } = useLeadsQuery({ scope: "all" });
   const leads = data ?? [];
   const [selected, setSelected] = useState<OnboardingLead | null>(null);
-
-  const owner = user
-    ? { id: user.id, role: "rm" as const, name: user.fullName }
-    : { id: "usr_rm_001", role: "rm" as const, name: "Priya Nair" };
 
   return (
     <>
       <PageHeader
-        eyebrow="RM · Onboarding"
-        title="Conversion pipeline"
-        description={`${leads.length} leads in flight across the funnel.`}
-        actions={
-          <InviteLeadDialog
-            owner={owner}
-            trigger={<Button className="gap-1.5"><UserPlus className="h-4 w-4" /> Invite client</Button>}
-          />
-        }
+        eyebrow="Admin · Onboarding"
+        title="Platform onboarding"
+        description={`${leads.length} leads across all RMs and distributors.`}
       />
       <div className="space-y-5 px-6 py-6 sm:px-8">
         <OnboardingStats leads={leads} />
-        <Tabs defaultValue="kanban">
+        <Tabs defaultValue="table">
           <TabsList>
-            <TabsTrigger value="kanban">Kanban</TabsTrigger>
             <TabsTrigger value="table">Table</TabsTrigger>
+            <TabsTrigger value="kanban">Kanban</TabsTrigger>
           </TabsList>
+          <TabsContent value="table" className="mt-4">
+            <LeadTable leads={leads} onSelect={setSelected} showOwnerFilter />
+          </TabsContent>
           <TabsContent value="kanban" className="mt-4">
             <LeadKanban leads={leads} onSelect={setSelected} />
           </TabsContent>
-          <TabsContent value="table" className="mt-4">
-            <LeadTable leads={leads} onSelect={setSelected} />
-          </TabsContent>
         </Tabs>
       </div>
-      <LeadDetailSheet lead={selected} onClose={() => setSelected(null)} />
+      <LeadDetailSheet lead={selected} isAdmin onClose={() => setSelected(null)} />
     </>
   );
 }
