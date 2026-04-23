@@ -34,7 +34,8 @@ import type { Goal, GoalCategory, GoalPriority, GoalStatus, GoalsSummary } from 
 export const Route = createFileRoute("/app/investor/goals")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
-    if (user && user.role !== "investor") throw redirect({ to: ROLE_HOME[user.role] });
+    const impersonating = useImpersonationStore.getState().client;
+    if (user && !impersonating) throw redirect({ to: ROLE_HOME[user.role] });
   },
   head: () => ({ meta: [{ title: "Goals — BuyBestFin" }] }),
   component: GoalsPage,
