@@ -1,80 +1,79 @@
 
 
-# Investor Portal — Final Polish Plan
+# B2B Conversion + Investor Read-Only Impersonation Views
 
-The B2C investor portal spec is **~95% built**. All major routes exist: Auth (login/forgot), Dashboard, Portfolio (+holding detail), Explore, Transactions, Profile/KYC, Order wizards (Lumpsum/SIP/Redeem/Switch), Goals, Tax Harvesting, AI Insights, Notifications, Settings. Architecture (feature-sliced, Axios+TanStack Query hooks, Zustand stores, Zod schemas) already matches every constraint in section 3.
+Strip B2C self-service surface, but **keep a minimal, read-only Investor UI** so RM/Admin can impersonate a client and see exactly what that client sees. Add the missing Reconciliation Module.
 
-This plan closes the remaining gaps and delivers a true "production-ready B2C" feel.
+## Decisions
 
-## Gaps vs. spec
+- **Keep** (read-only, impersonation-only): Investor Dashboard, Portfolio (+ holding detail), Transactions, Goals, Tax, Profile/KYC view. These are reachable **only** when `useImpersonationStore.client` is set, launched from the RM Client Roster.
+- **Delete** (true B2C self-service, no impersonation value): `signup`, Explore + scheme detail, all 4 Order wizards (lumpsum/SIP/redeem/switch), AI Insights, public landing investor copy.
+- **Guard**: every kept investor route's `beforeLoad` requires `impersonating != null` for non-investor roles. No direct logins land here.
+- **Banner**: existing `ImpersonationBanner` already handles the read-only chrome. All write CTAs (Invest, Start SIP, Add Bank, Add Nominee, New Goal) hidden when `readOnly`.
 
-1. **Signup is missing.** Spec calls for "Login (Email/Password & OTP), Forgot Password, **Signup**." Login page only has sign-in.
-2. **Scheme detail page is missing.** Explore links to `SchemeCard` but there's no `/app/investor/explore/$schemeId` deep-dive (fund factsheet, NAV history, allocations, invest CTA).
-3. **Add-Bank & Add-Nominee flows are toast stubs** in `app.investor.profile.tsx` — should be working dialogs with React Hook Form + Zod validation against mock state.
-4. **Goals "New goal" wizard** is a toast stub — spec lists Goal-Based Investing under Future Prospects, and a working wizard rounds it out.
-5. **Compliance footer is missing** — required for a real MF distributor (ARN 147231, AMFI risk disclaimer, Navinchandra Securities legal info).
-6. **Landing route `/`** redirects straight to `/login`. For a B2C product, a public marketing landing (hero + features + CTAs to login/signup) is expected.
+## Build plan
 
-## Build plan (in order)
+### 1. Strip pure B2C surface
+**Delete**:
+- `src/routes/signup.tsx`
+- `src/routes/app.investor.explore.tsx`, `app.investor.explore.$schemeId.tsx`
+- `src/routes/app.investor.orders.{lumpsum,sip,redeem,switch}.tsx`
+- `src/routes/app.investor.insights.tsx`
+- `src/features/{orders,schemes,insights}/` (folders + types)
+- `src/types/{orders,scheme,insights}.ts`
 
-### 1. Public marketing landing — `src/routes/index.tsx`
-Replace the redirect with a real landing page: hero with brand gradient + Playfair headline, 3-feature strip (Smart investing / Goal planning / Tax optimisation), trust bar (ARN, AMFI registered, BSE Star MF), CTAs to `/login` and `/signup`. Authenticated users still auto-redirect to their `ROLE_HOME`.
+### 2. Lock surviving investor routes to impersonation
+Edit `beforeLoad` in each kept investor route (`app.investor.index`, `portfolio`, `portfolio.$holdingId`, `transactions`, `goals`, `tax`, `profile`):
+```ts
+const { user } = useAuthStore.getState();
+const impersonating = useImpersonationStore.getState().client;
+if (!impersonating) throw redirect({ to: ROLE_HOME[user.role] });
+```
+(Drops the "allow real investor" branch — there are no real investors in B2B.)
 
-### 2. Signup flow — `src/routes/signup.tsx` + auth additions
-- New route mirroring login's split layout (`BrandPanel` + form panel).
-- Zod schema in `src/features/auth/schemas.ts`: `signupSchema` (fullName, email, mobile, password, confirmPassword, agreeTerms).
-- `signup()` mock in `src/features/auth/api.ts` returning `AuthResult`, plus `useSignupMutation()`.
-- Link from login footer ("New to BuyBestFin? Create account").
+### 3. Hide all write actions under impersonation
+Audit kept investor pages and remove/hide CTAs that no longer have a target:
+- Dashboard: drop "Invest now" / "Explore funds" buttons (already gated by `readOnly`, just clean dead links)
+- Portfolio + holding detail: drop "Invest more / Redeem / Switch" buttons
+- Goals: drop "New goal" + `GoalWizardDialog` mount → delete `src/features/goals/components/goal-wizard-dialog.tsx` + `src/features/goals/schemas.ts`
+- Profile: drop "Add bank / Add nominee" dialogs → delete `src/features/kyc/components/{add-bank-dialog,add-nominee-dialog}.tsx` + `src/features/kyc/schemas.ts`
 
-### 3. Scheme detail page — `src/routes/app.investor.explore.$schemeId.tsx`
-Deep-dive page with: hero (scheme name, AMC, NAV, 1Y return badge, rating, risk pill), Recharts NAV trend (mock 1Y series generated from scheme data), key facts grid (AUM, expense ratio, exit load, min lumpsum/SIP, benchmark, fund manager), allocation donut (mock asset/sector mix), and sticky "Invest now" + "Start SIP" CTAs that route to wizards with `?schemeId=`. Wire `SchemeCard` rows to link here.
+Keep the read-only data displays (tables, charts, KYC timeline, bank list, nominee list).
 
-### 4. Profile dialogs — bank + nominee
-In `app.investor.profile.tsx`, replace the two toast stubs with `Dialog` components:
-- **AddBankDialog**: form (bankName, accountNumber, ifsc, accountType) → optimistic update via local `useState` overlay on the query data, success toast.
-- **AddNomineeDialog**: form (name, relation, dob, sharePct) → same pattern; validation enforces total share ≤ 100%.
-- Both schemas live in `src/features/kyc/schemas.ts` (new file).
+### 4. Auth + nav cleanup
+- `src/types/auth.ts` — narrow `UserRole` to `"admin" | "rm" | "distributor"`
+- `src/features/auth/schemas.ts` — drop investor from `ROLE_OPTIONS`, delete `signupSchema`
+- `src/features/auth/api.ts` — drop `signup()` + `useSignupMutation()`, remove investor mock user
+- `src/features/auth/role-routes.ts` — drop `investor` key from `ROLE_HOME`
+- `src/config/navigation.ts` — remove `investorNav` entirely (sidebar never shows investor section; impersonated views are reached via RM client drill-down, not sidebar)
+- `src/routes/login.tsx` — drop investor option, remove "Create account" link
+- `src/routes/index.tsx` — rewrite as B2B partner landing (Admin / RM / Distributor strip, single CTA → `/login`)
 
-### 5. Goal creation wizard — `GoalWizardDialog`
-Multi-step `Dialog` (3 steps via `wizard-stepper`): Pick category → Target & date → Monthly contribution & link funds. Append created goal to local store overlay; replace the toast in `app.investor.goals.tsx`. Schema in `src/features/goals/schemas.ts`.
+### 5. RM → impersonation entry point
+Verify `src/routes/app.rm.clients.tsx` "View as client" action calls `useImpersonationStore.start(client)` then `navigate({ to: "/app/investor" })`. Same wiring usable from Admin Users page (add an action there too).
 
-### 6. Global compliance footer — `src/components/layout/compliance-footer.tsx`
-Render inside `AppShell` below `<main>`: Navinchandra Securities · ARN 147231 · "Mutual fund investments are subject to market risks. Read all scheme-related documents carefully." · BSE Star MF logo placeholder · links to terms/privacy/grievance. Also render on the new public landing.
-
-### 7. Wire-up & nav updates
-- Add `Explore Schemes` row click to navigate to scheme detail.
-- `app.investor.portfolio.$holdingId.tsx` — add a "View scheme page" link to scheme detail.
-- No new sidebar items (scheme detail is reached from Explore, dialogs are inline).
+### 6. Add Reconciliation Module (missing B2B feature)
+- `src/types/reconciliation.ts` — `ReconciliationFile`, `ReconciliationError`
+- `src/features/reconciliation/{fixtures.ts, api.ts, schemas.ts}` — mock query/mutation hooks
+- `src/features/reconciliation/components/{upload-wizard.tsx, error-grid.tsx}`
+- `src/routes/app.admin.reconciliation.tsx` — files table + upload wizard + per-file error sheet
+- Already linked from `navigation.ts` admin section
 
 ## Files
 
-**Created**
-- `src/routes/signup.tsx`
-- `src/routes/app.investor.explore.$schemeId.tsx`
-- `src/features/kyc/schemas.ts`
-- `src/features/kyc/components/add-bank-dialog.tsx`
-- `src/features/kyc/components/add-nominee-dialog.tsx`
-- `src/features/goals/schemas.ts`
-- `src/features/goals/components/goal-wizard-dialog.tsx`
-- `src/components/layout/compliance-footer.tsx`
+**Delete** (~15 files): signup, explore (×2), orders (×4), insights route, `features/{orders,schemes,insights}`, `features/goals/components/goal-wizard-dialog.tsx`, `features/goals/schemas.ts`, `features/kyc/components/add-{bank,nominee}-dialog.tsx`, `features/kyc/schemas.ts`, related types.
 
-**Edited**
-- `src/routes/index.tsx` — replace redirect with marketing landing (auth users still redirect)
-- `src/routes/login.tsx` — add "Create account" link
-- `src/features/auth/schemas.ts` — add `signupSchema`
-- `src/features/auth/api.ts` — add `signup()` + `useSignupMutation()`
-- `src/routes/app.investor.profile.tsx` — wire AddBank/AddNominee dialogs
-- `src/routes/app.investor.goals.tsx` — wire GoalWizardDialog
-- `src/features/schemes/components/scheme-card.tsx` — link to scheme detail
-- `src/components/layout/app-shell.tsx` — mount compliance footer
-- `src/routes/app.investor.portfolio.$holdingId.tsx` — link to scheme detail
+**Create**: `src/types/reconciliation.ts`, `src/features/reconciliation/{api.ts,fixtures.ts,schemas.ts}`, `src/features/reconciliation/components/{upload-wizard.tsx,error-grid.tsx}`, `src/routes/app.admin.reconciliation.tsx`.
+
+**Edit**: 7 surviving investor routes (tighten `beforeLoad`, strip write CTAs), `src/routes/{index,login}.tsx`, `src/types/auth.ts`, `src/features/auth/{schemas,api,role-routes}.ts`, `src/config/navigation.ts`, `src/routes/app.rm.clients.tsx` (verify impersonation wiring), `src/routes/app.admin.users.tsx` (add "View as" action).
 
 ## Verification
-- `/` shows landing (logged-out) or redirects (logged-in)
-- `/signup` round-trips and lands on investor dashboard
-- Explore card → `/app/investor/explore/<id>` renders factsheet + chart
-- Bank/Nominee dialogs validate, persist locally, and close cleanly
-- Goal wizard creates a goal that appears in the list
-- Compliance footer visible on every authenticated page and on landing
-- All 4 order wizards still work end-to-end
+
+- `/login` shows only Admin / RM / Distributor
+- `/signup`, `/app/investor/explore*`, `/app/investor/orders/*`, `/app/investor/insights` → 404
+- Sidebar never shows investor entries
+- RM → Clients → "View as client" → lands on `/app/investor` with banner, all write CTAs hidden, charts + tables render
+- Direct visit to `/app/investor` without impersonation → redirects to role home
+- `/app/admin/reconciliation` → upload wizard + files grid + error drill-down all work (mock)
+- `bun run build` passes; no leftover imports to deleted modules
 
