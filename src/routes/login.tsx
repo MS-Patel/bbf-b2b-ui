@@ -92,11 +92,8 @@ function LoginPage() {
               </TabsContent>
             </Tabs>
 
-            <p className="mt-6 text-center text-sm text-muted-foreground">
-              New to BuyBestFin?{" "}
-              <Link to="/signup" className="font-semibold text-foreground hover:underline">
-                Create account
-              </Link>
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+              Need access? Partner accounts are invite-only — contact your administrator.
             </p>
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -182,7 +179,7 @@ function PasswordForm({ onSuccess, setSession }: FormProps) {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "investor@buybestfin.dev", password: "demo1234", role: "investor" },
+    defaultValues: { email: "admin@buybestfin.dev", password: "demo1234", role: "admin" },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
@@ -270,7 +267,7 @@ function OtpForm({ onSuccess, setSession }: FormProps) {
 
   const form = useForm<OtpVerifyFormValues>({
     resolver: zodResolver(otpVerifySchema),
-    defaultValues: { identifier: "", otp: "", role: "investor" },
+    defaultValues: { identifier: "", otp: "", role: "admin" },
   });
 
   const handleRequest = async () => {
