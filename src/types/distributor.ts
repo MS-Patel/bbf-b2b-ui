@@ -15,3 +15,5 @@ export interface DistributorOverview {
   pendingPayout: number;
   aumTrend: Array<{ month: string; aum: number }>;
 }
+
+export type { DistributorProfile } from "@/types/admin";
