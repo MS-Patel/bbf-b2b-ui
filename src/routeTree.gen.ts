@@ -37,6 +37,7 @@ import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.r
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
+import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mappings'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
 import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
@@ -184,6 +185,11 @@ const AppAdminMasterDataRoute = AppAdminMasterDataRouteImport.update({
   path: '/admin/master-data',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminMappingsRoute = AppAdminMappingsRouteImport.update({
+  id: '/admin/mappings',
+  path: '/admin/mappings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminDistributorsRoute = AppAdminDistributorsRouteImport.update({
   id: '/admin/distributors',
   path: '/admin/distributors',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
+  '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
+  '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -285,6 +293,7 @@ export interface FileRoutesById {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
+  '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/distributors'
+    | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/distributors'
+    | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/distributors'
+    | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -619,6 +631,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMasterDataRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/mappings': {
+      id: '/app/admin/mappings'
+      path: '/admin/mappings'
+      fullPath: '/app/admin/mappings'
+      preLoaderRoute: typeof AppAdminMappingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/distributors': {
       id: '/app/admin/distributors'
       path: '/admin/distributors'
@@ -667,6 +686,7 @@ interface AppRouteChildren {
   AppAdminBranchesRoute: typeof AppAdminBranchesRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRoute
+  AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRoute
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
@@ -697,6 +717,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminBranchesRoute: AppAdminBranchesRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRoute,
+  AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRoute,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
