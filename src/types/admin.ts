@@ -66,3 +66,42 @@ export interface AdminOverviewStats {
   ordersTrend: Array<{ date: string; orders: number }>;
   aumByAsset: Array<{ name: string; value: number }>;
 }
+
+export type BranchStatus = "active" | "inactive";
+
+export interface Branch {
+  id: string;
+  code: string;
+  name: string;
+  city: string;
+  state: string;
+  manager: string;
+  rmCount: number;
+  distributorCount: number;
+  status: BranchStatus;
+  updatedAt: string;
+}
+
+export type MasterUploadType = "schemes" | "navs";
+export type MasterUploadStatus = "processed" | "processing" | "failed";
+
+export interface MasterUploadRun {
+  id: string;
+  type: MasterUploadType;
+  fileName: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  records: number;
+  errors: number;
+  status: MasterUploadStatus;
+}
+
+export interface AMCMaster {
+  id: string;
+  code: string;
+  name: string;
+  registrar: "CAMS" | "Karvy" | "KFintech";
+  activeSchemes: number;
+  lastNavAt: string;
+  status: "active" | "paused";
+}
