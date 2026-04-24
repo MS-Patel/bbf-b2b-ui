@@ -21,6 +21,7 @@ import { Route as AppDistributorIndexRouteImport } from './routes/app.distributo
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppRmOnboardingRouteImport } from './routes/app.rm.onboarding'
 import { Route as AppRmEarningsRouteImport } from './routes/app.rm.earnings'
+import { Route as AppRmDistributorsRouteImport } from './routes/app.rm.distributors'
 import { Route as AppRmClientsRouteImport } from './routes/app.rm.clients'
 import { Route as AppInvestorTransactionsRouteImport } from './routes/app.investor.transactions'
 import { Route as AppInvestorTaxRouteImport } from './routes/app.investor.tax'
@@ -101,6 +102,11 @@ const AppRmOnboardingRoute = AppRmOnboardingRouteImport.update({
 const AppRmEarningsRoute = AppRmEarningsRouteImport.update({
   id: '/rm/earnings',
   path: '/rm/earnings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRmDistributorsRoute = AppRmDistributorsRouteImport.update({
+  id: '/rm/distributors',
+  path: '/rm/distributors',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRmClientsRoute = AppRmClientsRouteImport.update({
@@ -239,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
+  '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
   '/app/rm/onboarding': typeof AppRmOnboardingRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -274,6 +281,7 @@ export interface FileRoutesByTo {
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
+  '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
   '/app/rm/onboarding': typeof AppRmOnboardingRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
+  '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
   '/app/rm/onboarding': typeof AppRmOnboardingRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -347,6 +356,7 @@ export interface FileRouteTypes {
     | '/app/investor/tax'
     | '/app/investor/transactions'
     | '/app/rm/clients'
+    | '/app/rm/distributors'
     | '/app/rm/earnings'
     | '/app/rm/onboarding'
     | '/app/admin/'
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/app/investor/tax'
     | '/app/investor/transactions'
     | '/app/rm/clients'
+    | '/app/rm/distributors'
     | '/app/rm/earnings'
     | '/app/rm/onboarding'
     | '/app/admin'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/app/investor/tax'
     | '/app/investor/transactions'
     | '/app/rm/clients'
+    | '/app/rm/distributors'
     | '/app/rm/earnings'
     | '/app/rm/onboarding'
     | '/app/admin/'
@@ -517,6 +529,13 @@ declare module '@tanstack/react-router' {
       path: '/rm/earnings'
       fullPath: '/app/rm/earnings'
       preLoaderRoute: typeof AppRmEarningsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/rm/distributors': {
+      id: '/app/rm/distributors'
+      path: '/rm/distributors'
+      fullPath: '/app/rm/distributors'
+      preLoaderRoute: typeof AppRmDistributorsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/rm/clients': {
@@ -703,6 +722,7 @@ interface AppRouteChildren {
   AppInvestorTaxRoute: typeof AppInvestorTaxRoute
   AppInvestorTransactionsRoute: typeof AppInvestorTransactionsRoute
   AppRmClientsRoute: typeof AppRmClientsRoute
+  AppRmDistributorsRoute: typeof AppRmDistributorsRoute
   AppRmEarningsRoute: typeof AppRmEarningsRoute
   AppRmOnboardingRoute: typeof AppRmOnboardingRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -734,6 +754,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInvestorTaxRoute: AppInvestorTaxRoute,
   AppInvestorTransactionsRoute: AppInvestorTransactionsRoute,
   AppRmClientsRoute: AppRmClientsRoute,
+  AppRmDistributorsRoute: AppRmDistributorsRoute,
   AppRmEarningsRoute: AppRmEarningsRoute,
   AppRmOnboardingRoute: AppRmOnboardingRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
@@ -753,3 +774,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
