@@ -30,7 +30,6 @@ const STATUS_TONE: Record<MappingStatus, StatusTone> = { active: "success", pend
 function AdminMappingsPage() {
   const { data, isLoading } = useUserMappingsQuery();
   const { data: distributors } = useDistributorsQuery();
-  const { data: rms } = useRmsQuery();
   const { data: branches } = useBranchesQuery();
   const [search, setSearch] = useState("");
   const [stage, setStage] = useState<MappingStatus | "all">("all");
