@@ -32,6 +32,7 @@ import { Route as AppDistributorCommissionsRouteImport } from './routes/app.dist
 import { Route as AppDistributorAumRouteImport } from './routes/app.distributor.aum'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
 import { Route as AppAdminSystemRouteImport } from './routes/app.admin.system'
+import { Route as AppAdminRmsRouteImport } from './routes/app.admin.rms'
 import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.reconciliation'
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
@@ -158,6 +159,11 @@ const AppAdminSystemRoute = AppAdminSystemRouteImport.update({
   path: '/admin/system',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRmsRoute = AppAdminRmsRouteImport.update({
+  id: '/admin/rms',
+  path: '/admin/rms',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminReconciliationRoute = AppAdminReconciliationRouteImport.update({
   id: '/admin/reconciliation',
   path: '/admin/reconciliation',
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
+  '/app/admin/rms': typeof AppAdminRmsRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
+  '/app/admin/rms': typeof AppAdminRmsRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
@@ -281,6 +289,7 @@ export interface FileRoutesById {
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
+  '/app/admin/rms': typeof AppAdminRmsRoute
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
@@ -316,6 +325,7 @@ export interface FileRouteTypes {
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
     | '/app/admin/reconciliation'
+    | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
     | '/app/admin/reconciliation'
+    | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
     | '/app/admin/reconciliation'
+    | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/users'
     | '/app/distributor/aum'
@@ -572,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminSystemRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/rms': {
+      id: '/app/admin/rms'
+      path: '/admin/rms'
+      fullPath: '/app/admin/rms'
+      preLoaderRoute: typeof AppAdminRmsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/reconciliation': {
       id: '/app/admin/reconciliation'
       path: '/admin/reconciliation'
@@ -652,6 +671,7 @@ interface AppRouteChildren {
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRoute
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
   AppAdminReconciliationRoute: typeof AppAdminReconciliationRoute
+  AppAdminRmsRoute: typeof AppAdminRmsRoute
   AppAdminSystemRoute: typeof AppAdminSystemRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
@@ -681,6 +701,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminOnboardingRoute: AppAdminOnboardingRoute,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
   AppAdminReconciliationRoute: AppAdminReconciliationRoute,
+  AppAdminRmsRoute: AppAdminRmsRoute,
   AppAdminSystemRoute: AppAdminSystemRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
