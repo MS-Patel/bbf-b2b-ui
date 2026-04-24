@@ -36,6 +36,7 @@ import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.r
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
+import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
 import { Route as AppInvestorPortfolioHoldingIdRouteImport } from './routes/app.investor.portfolio.$holdingId'
 
 const LoginRoute = LoginRouteImport.update({
@@ -175,6 +176,11 @@ const AppAdminCommissionsRoute = AppAdminCommissionsRouteImport.update({
   path: '/admin/commissions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminBranchesRoute = AppAdminBranchesRouteImport.update({
+  id: '/admin/branches',
+  path: '/admin/branches',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInvestorPortfolioHoldingIdRoute =
   AppInvestorPortfolioHoldingIdRouteImport.update({
     id: '/$holdingId',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/notifications'
     | '/app/settings'
+    | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/notifications'
     | '/app/settings'
+    | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/notifications'
     | '/app/settings'
+    | '/app/admin/branches'
     | '/app/admin/commissions'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -564,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminCommissionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/branches': {
+      id: '/app/admin/branches'
+      path: '/admin/branches'
+      fullPath: '/app/admin/branches'
+      preLoaderRoute: typeof AppAdminBranchesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/investor/portfolio/$holdingId': {
       id: '/app/investor/portfolio/$holdingId'
       path: '/$holdingId'
@@ -588,6 +607,7 @@ const AppInvestorPortfolioRouteWithChildren =
 interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppAdminBranchesRoute: typeof AppAdminBranchesRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRoute
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
@@ -614,6 +634,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppAdminBranchesRoute: AppAdminBranchesRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRoute,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
