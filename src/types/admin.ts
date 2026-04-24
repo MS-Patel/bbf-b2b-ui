@@ -105,3 +105,69 @@ export interface AMCMaster {
   lastNavAt: string;
   status: "active" | "paused";
 }
+
+export type PartnerStatus = "active" | "pending" | "suspended";
+export type MappingStatus = "active" | "pending" | "review";
+
+export interface DistributorProfile {
+  id: string;
+  name: string;
+  arn: string;
+  email: string;
+  phone: string;
+  city: string;
+  state: string;
+  branchId: string;
+  branchName: string;
+  rmOwnerId?: string;
+  rmOwnerName?: string;
+  clientCount: number;
+  rmCount: number;
+  aum: number;
+  status: PartnerStatus;
+  joinedAt: string;
+  updatedAt: string;
+}
+
+export interface RmProfile {
+  id: string;
+  name: string;
+  employeeCode: string;
+  email: string;
+  phone: string;
+  branchId: string;
+  branchName: string;
+  distributorIds: string[];
+  distributorNames: string[];
+  clientCount: number;
+  aum: number;
+  status: PartnerStatus;
+  joinedAt: string;
+  updatedAt: string;
+}
+
+export interface InvestorDistributorMapping {
+  id: string;
+  investorName: string;
+  investorEmail: string;
+  distributorId: string;
+  distributorName: string;
+  rmId: string;
+  rmName: string;
+  branchId: string;
+  branchName: string;
+  status: MappingStatus;
+  mappedAt: string;
+}
+
+export interface RmMapping {
+  id: string;
+  rmId: string;
+  rmName: string;
+  branchId: string;
+  branchName: string;
+  distributorIds: string[];
+  distributorNames: string[];
+  status: MappingStatus;
+  updatedAt: string;
+}

@@ -4,11 +4,15 @@ import {
   AMC_MASTER_FIXTURE,
   BRANCHES_FIXTURE,
   COMMISSIONS_FIXTURE,
+  DISTRIBUTORS_FIXTURE,
   INTEGRATIONS_FIXTURE,
   INTEGRATION_LOGS_FIXTURE,
+  INVESTOR_DISTRIBUTOR_MAPPINGS_FIXTURE,
   MASTER_UPLOADS_FIXTURE,
   PAYOUTS_FIXTURE,
   PLATFORM_USERS,
+  RM_MAPPINGS_FIXTURE,
+  RMS_FIXTURE,
 } from "./fixtures";
 
 function delay<T>(value: T, ms = 380): Promise<T> {
@@ -67,6 +71,30 @@ export function useMasterDataQuery() {
   return useQuery({
     queryKey: ["admin", "master-data"],
     queryFn: () => delay({ uploads: MASTER_UPLOADS_FIXTURE, amcs: AMC_MASTER_FIXTURE }),
+    staleTime: 60_000,
+  });
+}
+
+export function useDistributorsQuery() {
+  return useQuery({
+    queryKey: ["admin", "distributors"],
+    queryFn: () => delay(DISTRIBUTORS_FIXTURE),
+    staleTime: 60_000,
+  });
+}
+
+export function useRmsQuery() {
+  return useQuery({
+    queryKey: ["admin", "rms"],
+    queryFn: () => delay(RMS_FIXTURE),
+    staleTime: 60_000,
+  });
+}
+
+export function useUserMappingsQuery() {
+  return useQuery({
+    queryKey: ["admin", "user-mappings"],
+    queryFn: () => delay({ investors: INVESTOR_DISTRIBUTOR_MAPPINGS_FIXTURE, rms: RM_MAPPINGS_FIXTURE }),
     staleTime: 60_000,
   });
 }

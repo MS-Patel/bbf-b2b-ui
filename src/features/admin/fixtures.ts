@@ -3,8 +3,12 @@ import type {
   AMCMaster,
   Branch,
   CommissionRow,
+  DistributorProfile,
   IntegrationHealth,
   IntegrationLog,
+  InvestorDistributorMapping,
+  RmMapping,
+  RmProfile,
   MasterUploadRun,
   PayoutRun,
   PlatformUser,
@@ -177,3 +181,35 @@ export const AMC_MASTER_FIXTURE: AMCMaster[] = [
   { id: "amc_axis", code: "AXIS", name: "Axis Mutual Fund", registrar: "KFintech", activeSchemes: 126, lastNavAt: "2026-04-15T18:20:00Z", status: "active" },
   { id: "amc_quant", code: "QUANT", name: "Quant Mutual Fund", registrar: "Karvy", activeSchemes: 76, lastNavAt: "2026-04-14T18:15:00Z", status: "paused" },
 ];
+
+export const DISTRIBUTORS_FIXTURE: DistributorProfile[] = [
+  { id: "dist_001", name: "Equirus Wealth", arn: "ARN-148922", email: "ops@equiruswealth.in", phone: "+91 98765 43001", city: "Mumbai", state: "Maharashtra", branchId: "br_mum_001", branchName: "Mumbai Central", rmOwnerId: "rm_001", rmOwnerName: "Priya Khanna", clientCount: 486, rmCount: 8, aum: 840_000_000, status: "active", joinedAt: "2024-08-12T10:20:00Z", updatedAt: "2026-04-14T11:30:00Z" },
+  { id: "dist_002", name: "Anand Rathi Partner Desk", arn: "ARN-073421", email: "partners@arwealth.in", phone: "+91 98765 43002", city: "New Delhi", state: "Delhi", branchId: "br_del_001", branchName: "Delhi NCR", rmOwnerId: "rm_002", rmOwnerName: "Rahul Bose", clientCount: 352, rmCount: 6, aum: 620_000_000, status: "active", joinedAt: "2024-11-02T09:10:00Z", updatedAt: "2026-04-13T15:45:00Z" },
+  { id: "dist_003", name: "Bengaluru Alpha Advisors", arn: "ARN-225870", email: "support@alphaadvisors.in", phone: "+91 98765 43003", city: "Bengaluru", state: "Karnataka", branchId: "br_blr_001", branchName: "Bengaluru South", rmOwnerId: "rm_003", rmOwnerName: "Neha Iyer", clientCount: 298, rmCount: 5, aum: 510_000_000, status: "pending", joinedAt: "2025-03-18T12:00:00Z", updatedAt: "2026-04-16T07:30:00Z" },
+  { id: "dist_004", name: "Pune Growth Capital", arn: "ARN-992104", email: "desk@punegrowth.in", phone: "+91 98765 43004", city: "Pune", state: "Maharashtra", branchId: "br_pun_001", branchName: "Pune West", rmOwnerId: "rm_004", rmOwnerName: "Vikram Reddy", clientCount: 174, rmCount: 3, aum: 280_000_000, status: "suspended", joinedAt: "2025-07-21T08:45:00Z", updatedAt: "2026-04-10T10:05:00Z" },
+];
+
+export const RMS_FIXTURE: RmProfile[] = [
+  { id: "rm_001", name: "Priya Khanna", employeeCode: "RM-MUM-014", email: "priya.khanna@buybestfin.app", phone: "+91 98765 44001", branchId: "br_mum_001", branchName: "Mumbai Central", distributorIds: ["dist_001"], distributorNames: ["Equirus Wealth"], clientCount: 248, aum: 420_000_000, status: "active", joinedAt: "2023-06-11T09:00:00Z", updatedAt: "2026-04-15T09:30:00Z" },
+  { id: "rm_002", name: "Rahul Bose", employeeCode: "RM-DEL-008", email: "rahul.bose@buybestfin.app", phone: "+91 98765 44002", branchId: "br_del_001", branchName: "Delhi NCR", distributorIds: ["dist_002"], distributorNames: ["Anand Rathi Partner Desk"], clientCount: 216, aum: 360_000_000, status: "active", joinedAt: "2023-09-04T09:00:00Z", updatedAt: "2026-04-14T14:30:00Z" },
+  { id: "rm_003", name: "Neha Iyer", employeeCode: "RM-BLR-021", email: "neha.iyer@buybestfin.app", phone: "+91 98765 44003", branchId: "br_blr_001", branchName: "Bengaluru South", distributorIds: ["dist_003"], distributorNames: ["Bengaluru Alpha Advisors"], clientCount: 184, aum: 318_000_000, status: "active", joinedAt: "2024-02-19T09:00:00Z", updatedAt: "2026-04-15T16:10:00Z" },
+  { id: "rm_004", name: "Vikram Reddy", employeeCode: "RM-PUN-006", email: "vikram.reddy@buybestfin.app", phone: "+91 98765 44004", branchId: "br_pun_001", branchName: "Pune West", distributorIds: ["dist_004"], distributorNames: ["Pune Growth Capital"], clientCount: 122, aum: 190_000_000, status: "pending", joinedAt: "2024-12-03T09:00:00Z", updatedAt: "2026-04-16T08:40:00Z" },
+];
+
+export const INVESTOR_DISTRIBUTOR_MAPPINGS_FIXTURE: InvestorDistributorMapping[] = PLATFORM_USERS.slice(0, 18).map((u, i) => {
+  const dist = DISTRIBUTORS_FIXTURE[i % DISTRIBUTORS_FIXTURE.length]!;
+  const rm = RMS_FIXTURE[i % RMS_FIXTURE.length]!;
+  return { id: `map_inv_${i.toString().padStart(3, "0")}`, investorName: u.fullName, investorEmail: u.email, distributorId: dist.id, distributorName: dist.name, rmId: rm.id, rmName: rm.name, branchId: rm.branchId, branchName: rm.branchName, status: i % 5 === 0 ? "review" : i % 4 === 0 ? "pending" : "active", mappedAt: u.joinedAt };
+});
+
+export const RM_MAPPINGS_FIXTURE: RmMapping[] = RMS_FIXTURE.map((rm, i) => ({
+  id: `map_rm_${i.toString().padStart(3, "0")}`,
+  rmId: rm.id,
+  rmName: rm.name,
+  branchId: rm.branchId,
+  branchName: rm.branchName,
+  distributorIds: rm.distributorIds,
+  distributorNames: rm.distributorNames,
+  status: i === 3 ? "pending" : "active",
+  updatedAt: rm.updatedAt,
+}));
