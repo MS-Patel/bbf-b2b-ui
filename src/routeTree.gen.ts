@@ -36,6 +36,7 @@ import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.r
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
+import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
 import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
 import { Route as AppInvestorPortfolioHoldingIdRouteImport } from './routes/app.investor.portfolio.$holdingId'
@@ -177,6 +178,11 @@ const AppAdminMasterDataRoute = AppAdminMasterDataRouteImport.update({
   path: '/admin/master-data',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminDistributorsRoute = AppAdminDistributorsRouteImport.update({
+  id: '/admin/distributors',
+  path: '/admin/distributors',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminCommissionsRoute = AppAdminCommissionsRouteImport.update({
   id: '/admin/commissions',
   path: '/admin/commissions',
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRoute
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/admin/branches'
     | '/app/admin/commissions'
+    | '/app/admin/distributors'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/admin/branches'
     | '/app/admin/commissions'
+    | '/app/admin/distributors'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/admin/branches'
     | '/app/admin/commissions'
+    | '/app/admin/distributors'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
@@ -588,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMasterDataRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/distributors': {
+      id: '/app/admin/distributors'
+      path: '/admin/distributors'
+      fullPath: '/app/admin/distributors'
+      preLoaderRoute: typeof AppAdminDistributorsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/commissions': {
       id: '/app/admin/commissions'
       path: '/admin/commissions'
@@ -628,6 +647,7 @@ interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppAdminBranchesRoute: typeof AppAdminBranchesRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
+  AppAdminDistributorsRoute: typeof AppAdminDistributorsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRoute
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
@@ -656,6 +676,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppAdminBranchesRoute: AppAdminBranchesRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
+  AppAdminDistributorsRoute: AppAdminDistributorsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRoute,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
@@ -690,3 +711,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
