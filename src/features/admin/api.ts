@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   ADMIN_OVERVIEW_FIXTURE,
+  AMC_MASTER_FIXTURE,
+  BRANCHES_FIXTURE,
   COMMISSIONS_FIXTURE,
   INTEGRATIONS_FIXTURE,
   INTEGRATION_LOGS_FIXTURE,
+  MASTER_UPLOADS_FIXTURE,
   PAYOUTS_FIXTURE,
   PLATFORM_USERS,
 } from "./fixtures";
@@ -48,6 +51,22 @@ export function useIntegrationsQuery() {
   return useQuery({
     queryKey: ["admin", "integrations"],
     queryFn: () => delay({ health: INTEGRATIONS_FIXTURE, logs: INTEGRATION_LOGS_FIXTURE }),
+    staleTime: 60_000,
+  });
+}
+
+export function useBranchesQuery() {
+  return useQuery({
+    queryKey: ["admin", "branches"],
+    queryFn: () => delay(BRANCHES_FIXTURE),
+    staleTime: 60_000,
+  });
+}
+
+export function useMasterDataQuery() {
+  return useQuery({
+    queryKey: ["admin", "master-data"],
+    queryFn: () => delay({ uploads: MASTER_UPLOADS_FIXTURE, amcs: AMC_MASTER_FIXTURE }),
     staleTime: 60_000,
   });
 }

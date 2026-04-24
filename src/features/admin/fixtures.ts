@@ -1,8 +1,11 @@
 import type {
   AdminOverviewStats,
+  AMCMaster,
+  Branch,
   CommissionRow,
   IntegrationHealth,
   IntegrationLog,
+  MasterUploadRun,
   PayoutRun,
   PlatformUser,
 } from "@/types/admin";
@@ -152,3 +155,25 @@ function buildAdminOverview(): AdminOverviewStats {
   };
 }
 export const ADMIN_OVERVIEW_FIXTURE: AdminOverviewStats = buildAdminOverview();
+
+export const BRANCHES_FIXTURE: Branch[] = [
+  { id: "br_mum_001", code: "MUM-CEN", name: "Mumbai Central", city: "Mumbai", state: "Maharashtra", manager: "Aditi Sharma", rmCount: 18, distributorCount: 42, status: "active", updatedAt: "2026-04-16T08:30:00Z" },
+  { id: "br_del_001", code: "DEL-NCR", name: "Delhi NCR", city: "New Delhi", state: "Delhi", manager: "Rahul Bose", rmCount: 15, distributorCount: 35, status: "active", updatedAt: "2026-04-15T13:10:00Z" },
+  { id: "br_blr_001", code: "BLR-SOU", name: "Bengaluru South", city: "Bengaluru", state: "Karnataka", manager: "Neha Iyer", rmCount: 12, distributorCount: 28, status: "active", updatedAt: "2026-04-14T16:45:00Z" },
+  { id: "br_pun_001", code: "PUN-WST", name: "Pune West", city: "Pune", state: "Maharashtra", manager: "Vikram Reddy", rmCount: 9, distributorCount: 21, status: "inactive", updatedAt: "2026-04-12T09:20:00Z" },
+];
+
+export const MASTER_UPLOADS_FIXTURE: MasterUploadRun[] = [
+  { id: "upl_001", type: "navs", fileName: "nav_2026_04_15.csv", uploadedBy: "Ops Admin", uploadedAt: "2026-04-16T07:12:00Z", records: 2944, errors: 0, status: "processed" },
+  { id: "upl_002", type: "schemes", fileName: "scheme_master_apr.csv", uploadedBy: "Ops Admin", uploadedAt: "2026-04-15T18:45:00Z", records: 1842, errors: 6, status: "processed" },
+  { id: "upl_003", type: "navs", fileName: "nav_2026_04_14.csv", uploadedBy: "System", uploadedAt: "2026-04-15T07:05:00Z", records: 2938, errors: 0, status: "processed" },
+  { id: "upl_004", type: "schemes", fileName: "new_fund_offers.csv", uploadedBy: "Ops Admin", uploadedAt: "2026-04-16T09:10:00Z", records: 24, errors: 1, status: "processing" },
+];
+
+export const AMC_MASTER_FIXTURE: AMCMaster[] = [
+  { id: "amc_hdfc", code: "HDFC", name: "HDFC Mutual Fund", registrar: "CAMS", activeSchemes: 168, lastNavAt: "2026-04-15T18:30:00Z", status: "active" },
+  { id: "amc_sbi", code: "SBI", name: "SBI Mutual Fund", registrar: "CAMS", activeSchemes: 192, lastNavAt: "2026-04-15T18:28:00Z", status: "active" },
+  { id: "amc_icici", code: "ICICI", name: "ICICI Prudential Mutual Fund", registrar: "CAMS", activeSchemes: 214, lastNavAt: "2026-04-15T18:24:00Z", status: "active" },
+  { id: "amc_axis", code: "AXIS", name: "Axis Mutual Fund", registrar: "KFintech", activeSchemes: 126, lastNavAt: "2026-04-15T18:20:00Z", status: "active" },
+  { id: "amc_quant", code: "QUANT", name: "Quant Mutual Fund", registrar: "Karvy", activeSchemes: 76, lastNavAt: "2026-04-14T18:15:00Z", status: "paused" },
+];

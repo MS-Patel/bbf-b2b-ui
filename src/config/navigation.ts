@@ -7,7 +7,9 @@ import {
   Activity,
   HandCoins,
   Briefcase,
+  Building2,
   Bell,
+  Database,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -32,8 +34,13 @@ const adminNav: NavSection[] = [
       { label: "Overview", to: "/app/admin", icon: LayoutDashboard },
       { label: "Users & Roles", to: "/app/admin/users", icon: Users },
       { label: "Onboarding", to: "/app/admin/onboarding", icon: ShieldCheck },
+      { label: "Branches", to: "/app/admin/branches", icon: Building2 },
       { label: "Reconciliation", to: "/app/admin/reconciliation", icon: FileSpreadsheet },
     ],
+  },
+  {
+    label: "Configuration",
+    items: [{ label: "Master Data", to: "/app/admin/master-data", icon: Database }],
   },
   {
     label: "Finance",
