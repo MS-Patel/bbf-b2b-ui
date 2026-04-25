@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 const consentSchema = z.object({
-  investorConsent: z.literal(true, { errorMap: () => ({ message: "Investor consent required" }) }),
-  riskAck: z.literal(true, { errorMap: () => ({ message: "Risk acknowledgement required" }) }),
-  cutoffAck: z.literal(true, { errorMap: () => ({ message: "Cut-off acknowledgement required" }) }),
+  investorConsent: z.boolean().refine((v) => v, "Investor consent required"),
+  riskAck: z.boolean().refine((v) => v, "Risk acknowledgement required"),
+  cutoffAck: z.boolean().refine((v) => v, "Cut-off acknowledgement required"),
 });
 
 export const lumpSumSchema = z.object({
