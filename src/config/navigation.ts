@@ -11,6 +11,7 @@ import {
   Bell,
   Database,
   Settings,
+  ShoppingCart,
   type LucideIcon,
 } from "lucide-react";
 import type { UserRole } from "@/types/auth";
@@ -37,6 +38,7 @@ const adminNav: NavSection[] = [
       { label: "RMs", to: "/app/admin/rms", icon: Users },
       { label: "Mappings", to: "/app/admin/mappings", icon: Activity },
       { label: "Onboarding", to: "/app/admin/onboarding", icon: ShieldCheck },
+      { label: "Orders", to: "/app/admin/orders", icon: ShoppingCart },
       { label: "Branches", to: "/app/admin/branches", icon: Building2 },
       { label: "Reconciliation", to: "/app/admin/reconciliation", icon: FileSpreadsheet },
     ],
@@ -66,6 +68,7 @@ const rmNav: NavSection[] = [
       { label: "Client Roster", to: "/app/rm/clients", icon: Users },
       { label: "Distributors", to: "/app/rm/distributors", icon: Briefcase },
       { label: "Onboarding", to: "/app/rm/onboarding", icon: ShieldCheck },
+      { label: "Orders", to: "/app/rm/orders", icon: ShoppingCart },
     ],
   },
   {
@@ -80,6 +83,7 @@ const distributorNav: NavSection[] = [
     items: [
       { label: "Overview", to: "/app/distributor", icon: LayoutDashboard },
       { label: "Onboarding", to: "/app/distributor/onboarding", icon: ShieldCheck },
+      { label: "Orders", to: "/app/distributor/orders", icon: ShoppingCart },
       { label: "AUM", to: "/app/distributor/aum", icon: Briefcase },
       { label: "Commissions", to: "/app/distributor/commissions", icon: HandCoins },
     ],
