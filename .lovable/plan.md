@@ -1,109 +1,105 @@
+## On-Behalf-Of Purchase / Investment Flow
 
+A partner-driven order placement workflow where Admin, RM, or Distributor can place a **lump-sum**, **SIP**, **switch**, or **redeem** order on behalf of a verified investor, review a confirmation summary, and track the resulting order in a register. Mirrors the existing onboarding feature module pattern (typed mocks, role-scoped routes, kanban/table views).
 
-# Investor Onboarding Flow (Admin / RM / Distributor)
+### What the user will see
 
-A partner-driven onboarding pipeline where Admin, RM, or Distributor can **invite** an investor, **collect KYC** on their behalf (or send a magic link), **track progress** through a Kanban funnel, and **convert** the verified investor into an active client. No B2C self-signup — this is the B2B way to bring an investor onto the platform.
+**1. New "Investments" / "Orders" entry in each partner sidebar**
+- Admin → `/app/admin/orders` (all orders, all clients)
+- RM → `/app/rm/orders` (orders for RM's clients)
+- Distributor → `/app/distributor/orders` (orders for distributor's clients)
 
-## Scope
+**2. Orders register page (per role, scoped)**
+- Stats strip: Today's gross investment, SIPs registered today, Pending verification, Failed
+- Filter bar: client search, order type (lump-sum / SIP / switch / redeem), status, date range, AMC
+- DataTable of orders: client, scheme, type, amount, units, NAV, status, placed-by, placed-at
+- Row actions: View ticket, Cancel pending, Retry failed
+- Primary CTA: **"New order"** (opens client picker)
 
-### Capabilities (per role)
-- **RM**: invite leads, drive KYC for own assigned leads, view own funnel.
-- **Distributor**: invite leads under their ARN, view own funnel, hand off to RM if needed.
-- **Admin**: see all leads platform-wide, reassign owner, force-approve / reject KYC, view audit trail.
+**3. New-order flow (drawer / sheet, 3 steps)**
 
-### Funnel stages (reuse existing `LeadStage`)
-`lead → kyc_started → kyc_in_review → verified → first_invest`
+**Step 1 — Client picker**
+- Searchable list of eligible clients (KYC verified only)
+- Shows KYC status, risk profile, AUM
+- Admin sees all clients; RM sees own roster; Distributor sees own clients
+- Blocks selection of non-verified clients with an inline reason
 
-## Build plan
+**Step 2 — Order ticket**
+- Order-type tabs: **Lump-sum**, **SIP**, **Switch**, **Redeem**
+- Scheme search (typeahead, AMC + scheme name + plan, with category badge)
+- For Lump-sum: amount (with quick-pick chips ₹5k/10k/25k/50k/1L), folio (existing or new), payment mode (Net banking / UPI / NEFT)
+- For SIP: amount, frequency (Monthly / Quarterly), SIP date (1–28), tenure (months or "perpetual"), first debit date, mandate (existing UMRN dropdown or new mandate flow stub)
+- For Switch: source scheme + units/all, target scheme
+- For Redeem: source scheme, units/amount/all, payout bank
+- Live calculation panel: indicative units (amount / latest NAV), exit-load warning, cut-off time banner (3 PM equity / 1:30 PM liquid)
+- Risk check: warn if scheme risk > client risk profile (acknowledge checkbox)
 
-### 1. Shared onboarding feature module — `src/features/onboarding/`
-- `types.ts` — extend `OnboardingLead` with `ownerId`, `ownerRole`, `ownerName`, `assignedRm?`, `pan?`, `phone?`, `notes?`, `kycChecklist: { pan, aadhaar, bank, nominee, fatca, esign }` (each `pending | submitted | verified | rejected`), `rejectionReason?`, `inviteSentAt?`, `inviteLink?` (mock UUID).
-- `fixtures.ts` — seed ~30 leads spread across stages, assigned to mixed RMs/distributors. Move `RM_LEADS_FIXTURE` here and re-export from `rm/fixtures.ts` for backward compat.
-- `api.ts` — TanStack Query hooks against in-memory store (mock):
-  - `useLeadsQuery({ scope: "mine" | "all", ownerId? })`
-  - `useLeadQuery(id)`
-  - `useInviteLeadMutation()` — creates lead at stage `lead`, generates magic link
-  - `useUpdateKycChecklistMutation()` — flips checklist items, advances stage automatically
-  - `useAdvanceStageMutation()` — explicit stage transition with optimistic update
-  - `useReassignLeadMutation()` — Admin only
-  - `useRejectLeadMutation()` — Admin only, sets rejectionReason
-- `schemas.ts` — Zod for invite form (name, email, phone, PAN optional, source, assignedRm optional) and KYC update (file/field per checklist item).
+**Step 3 — Confirmation & consent**
+- Summary card of all order details
+- Compliance checkboxes: "Investor consent received via call/email", "Risk profile acknowledged", "Cut-off awareness"
+- Optional reference note (call ID, email subject)
+- "Place order" CTA → toast with order ID, drawer closes, register refreshes
+- New row appears in register with status `pending` (auto-advances to `processing` then `completed` for demo)
 
-### 2. Shared UI components — `src/features/onboarding/components/`
-- `invite-lead-dialog.tsx` — react-hook-form + Zod, single dialog reused by all roles. Generates a mock magic link on submit and copies to clipboard via toast.
-- `lead-detail-sheet.tsx` — slide-out Sheet with tabs:
-  - **Profile** (name, email, phone, PAN, source, owner, timestamps)
-  - **KYC checklist** — 6 rows (PAN, Aadhaar, Bank, Nominee, FATCA, e-Sign), each with status badge + action menu (mark submitted / verified / rejected). Auto-advances stage when thresholds met.
-  - **Activity** — timeline of stage changes (mocked from `updatedAt` history).
-  - Footer actions: Approve & convert, Reject (with reason), Reassign (Admin only).
-- `lead-kanban.tsx` — extracted from current RM onboarding page; 5 columns, draggable optional (skip drag for v1, use stage action menu on each card). Card click opens `lead-detail-sheet`.
-- `lead-table.tsx` — alternative tabular view with filters (stage, owner, source, date range), used by Admin.
-- `onboarding-stats.tsx` — 4 KPI cards (Total leads, In review, Verified MTD, Conversion %).
+**4. Empty / error states**
+- Client picker empty: "No verified clients yet — invite via Onboarding"
+- Scheme picker no match: "No schemes match — check master data sync"
+- Failed order row exposes reason + Retry
 
-### 3. Routes
+**5. Notifications bell**
+- Increments on order placed and on terminal status (completed / failed)
 
-**RM** — rewrite `src/routes/app.rm.onboarding.tsx`:
-- `PageHeader` with "Invite client" button → `InviteLeadDialog`
-- `OnboardingStats` (scoped to current RM)
-- Tabs: **Kanban** (default) / **Table**
-- Both views scoped to `useLeadsQuery({ scope: "mine", ownerId: user.id })`
-- Card/row click → `LeadDetailSheet`
+### Technical implementation
 
-**Distributor** — new `src/routes/app.distributor.onboarding.tsx`:
-- Same layout as RM but scoped to distributor's leads
-- Add nav entry in `distributorNav` (`config/navigation.ts`): `{ label: "Onboarding", to: "/app/distributor/onboarding", icon: ShieldCheck }`
-- Update Distributor Overview to surface lead count
+**New types** (`src/types/orders.ts`)
+- `OrderType = "lump_sum" | "sip" | "switch" | "redeem"`
+- `OrderStatus = "draft" | "pending" | "processing" | "completed" | "failed" | "cancelled"`
+- `PlacedByRole = "admin" | "rm" | "distributor"`
+- `Order` interface with: id, clientId/Name, schemeCode/Name, amc, type, status, amount, units, nav, folio, sipFrequency?, sipDate?, sipTenure?, mandateId?, switchTargetCode?, payoutMode?, placedBy {id,name,role}, placedAt, settledAt?, failureReason?, consent flags
+- `SchemeLite` interface (code, name, amc, category, latestNav, navAsOf, riskBand, exitLoadDays, cutoffTime)
+- `MandateLite` (umrn, bank, maxAmount, status)
 
-**Admin** — new `src/routes/app.admin.onboarding.tsx`:
-- Platform-wide view, `useLeadsQuery({ scope: "all" })`
-- Filters: owner role (RM/Distributor), specific owner (combobox), stage, source, date range
-- Default to **Table** view (data density); Kanban available as toggle
-- Per-row actions: View, Reassign, Reject
-- Add nav entry in `adminNav` Operations section between Users and Reconciliation
+**New feature module** `src/features/orders/`
+- `fixtures.ts` — 80 seeded orders across statuses/types, ~40 schemes (reuse names from `src/features/transactions/fixtures.ts`), 6 mandates per sample client
+- `schemas.ts` — zod schemas: `lumpSumOrderSchema`, `sipOrderSchema`, `switchOrderSchema`, `redeemOrderSchema` (PAN, amount min ₹500/₹100 SIP, SIP date 1–28, tenure ≥6, etc.)
+- `api.ts` — typed hooks (real wiring stubs in comments):
+  - `useOrdersQuery({ scope: "all" | "rm" | "distributor", ownerId? })` (placeholder: GET `/orders/`)
+  - `useOrderQuery(id)`
+  - `useEligibleClientsQuery({ scope, ownerId })` — filters KYC-verified from `RM_CLIENTS_FIXTURE`
+  - `useSchemesQuery({ search, category? })` — filters scheme fixture
+  - `useMandatesQuery(clientId)`
+  - `usePlaceOrderMutation()` (POST `/orders/`) — adds to in-memory store, simulates `pending → processing → completed` over 3s, emits notification
+  - `useCancelOrderMutation()` and `useRetryOrderMutation()`
+- `components/`
+  - `order-stats.tsx` — 4 KPI cards
+  - `orders-table.tsx` — DataTable column set + status badge mapping
+  - `client-picker.tsx` — sheet step 1
+  - `order-ticket.tsx` — sheet step 2 with type tabs and dynamic form (react-hook-form + zod)
+  - `order-confirmation.tsx` — sheet step 3 with consent checkboxes
+  - `place-order-sheet.tsx` — orchestrates the 3 steps with internal state machine
+  - `scheme-combobox.tsx` — typeahead built on existing `Command` primitive
+  - `cutoff-banner.tsx` — small alert showing applicable cut-off
 
-### 4. Conversion → impersonation handoff
-When a lead reaches `verified` and Admin/RM clicks **Approve & convert**:
-- Mock-create a `ClientLite` and add to `RM_CLIENTS_FIXTURE` in-memory
-- Toast: "Client created — open as client?"
-- Action button starts impersonation via `useImpersonationStore.start(client)` and navigates to `/app/investor`
-- Lead stage advances to `first_invest` once the impersonated session places a (mock) order — out of scope for v1, just mark `verified` → `first_invest` manually via stage menu.
+**New routes**
+- `src/routes/app.admin.orders.tsx` — admin scope, filter by `placedByRole`
+- `src/routes/app.rm.orders.tsx` — RM scope, owner = current RM id
+- `src/routes/app.distributor.orders.tsx` — distributor scope
+- All three routes use `beforeLoad` role guard (mirroring `app.rm.clients.tsx`) and reuse the same `OrdersRegister` shared component with a `scope` prop
 
-### 5. Notifications wiring
-Hook `useInviteLeadMutation` and `useAdvanceStageMutation` to push entries into existing `notifications` fixture (in-memory) so the bell shows "New lead invited" / "KYC verified for X". Reuse existing `useNotificationsQuery`.
+**Navigation** (`src/config/navigation.ts`)
+- Admin → Operations: add **"Orders"** (icon `ShoppingCart`) before Onboarding
+- RM → Clients: add **"Orders"** after Client Roster
+- Distributor → Business: add **"Orders"** after Onboarding
 
-### 6. Cleanup
-- Update `src/types/rm.ts` to re-export `OnboardingLead` from `@/features/onboarding/types` (avoid duplication).
-- Drop the read-only Kanban inside `app.rm.onboarding.tsx` — replaced by new shared component.
+**Cross-module integrations**
+- `useConvertLeadMutation` in onboarding currently lands the RM at `/app/investor`; extend with a toast action "Place first order" linking to `/app/rm/orders?newOrderFor={clientId}` (read query param to pre-open the sheet on the chosen client)
+- Notifications: append via existing `notifBus` pattern (clone the small helper or import from a shared notifications util — implementation will inline a similar bus in orders module to stay decoupled, mirroring onboarding)
 
-## Files
-
-**Create**
-- `src/features/onboarding/types.ts`
-- `src/features/onboarding/fixtures.ts`
-- `src/features/onboarding/api.ts`
-- `src/features/onboarding/schemas.ts`
-- `src/features/onboarding/components/invite-lead-dialog.tsx`
-- `src/features/onboarding/components/lead-detail-sheet.tsx`
-- `src/features/onboarding/components/lead-kanban.tsx`
-- `src/features/onboarding/components/lead-table.tsx`
-- `src/features/onboarding/components/onboarding-stats.tsx`
-- `src/routes/app.distributor.onboarding.tsx`
-- `src/routes/app.admin.onboarding.tsx`
-
-**Edit**
-- `src/routes/app.rm.onboarding.tsx` — replace with shared components
-- `src/config/navigation.ts` — add Distributor + Admin Onboarding entries
-- `src/types/rm.ts` — re-export from onboarding types
-- `src/features/rm/fixtures.ts` — drop `RM_LEADS_FIXTURE` (or keep as re-export)
-- `src/features/rm/api.ts` — `useRmLeadsQuery` becomes a thin wrapper over `useLeadsQuery({ scope: "mine" })`
-
-## Verification
-- RM `/app/rm/onboarding` shows Kanban + "Invite client" works end-to-end (toast with magic link)
-- Click any card → sheet opens, flipping all 6 KYC items to "verified" auto-advances stage to `verified`
-- "Approve & convert" creates a client, toast offers impersonation, RM lands on `/app/investor` with banner
-- Distributor `/app/distributor/onboarding` mirrors RM scoped to distributor's own leads
-- Admin `/app/admin/onboarding` sees all leads, can filter by owner role, reassign a lead's owner, reject with reason
-- Sidebar shows new entries for Distributor and Admin
-- Notifications bell increments on invite / verification events
+**Acceptance criteria**
+- Each role sees their scoped Orders page from sidebar; non-matching role gets redirected by `beforeLoad`
+- Clicking "New order" opens a 3-step sheet that validates per step before allowing Next
+- Placing an order inserts a `pending` row that auto-progresses to `completed`; a SIP shows `Active SIP` badge after registration
+- Risk override requires explicit checkbox; consent checkboxes block submission until ticked
+- Cancel works only on `pending`; Retry only on `failed`
+- Admin can filter by RM/Distributor who placed the order; RM/Distributor cannot see other partners' orders
 - `bun run build` passes
-
