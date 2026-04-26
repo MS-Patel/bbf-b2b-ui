@@ -43,7 +43,9 @@ import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboa
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
 import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mappings'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
+import { Route as AppAdminDistributorCategoriesRouteImport } from './routes/app.admin.distributor-categories'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
+import { Route as AppAdminBrokerageImportsRouteImport } from './routes/app.admin.brokerage-imports'
 import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
 import { Route as AppInvestorPortfolioHoldingIdRouteImport } from './routes/app.investor.portfolio.$holdingId'
 
@@ -219,11 +221,23 @@ const AppAdminDistributorsRoute = AppAdminDistributorsRouteImport.update({
   path: '/admin/distributors',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminDistributorCategoriesRoute =
+  AppAdminDistributorCategoriesRouteImport.update({
+    id: '/admin/distributor-categories',
+    path: '/admin/distributor-categories',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppAdminCommissionsRoute = AppAdminCommissionsRouteImport.update({
   id: '/admin/commissions',
   path: '/admin/commissions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminBrokerageImportsRoute =
+  AppAdminBrokerageImportsRouteImport.update({
+    id: '/admin/brokerage-imports',
+    path: '/admin/brokerage-imports',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppAdminBranchesRoute = AppAdminBranchesRouteImport.update({
   id: '/admin/branches',
   path: '/admin/branches',
@@ -244,7 +258,9 @@ export interface FileRoutesByFullPath {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
+  '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
@@ -283,7 +299,9 @@ export interface FileRoutesByTo {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
+  '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
@@ -323,7 +341,9 @@ export interface FileRoutesById {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/admin/branches': typeof AppAdminBranchesRoute
+  '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
@@ -364,7 +384,9 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/branches'
+    | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
@@ -403,7 +425,9 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/branches'
+    | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
@@ -442,7 +466,9 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/settings'
     | '/app/admin/branches'
+    | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
@@ -721,11 +747,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminDistributorsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/distributor-categories': {
+      id: '/app/admin/distributor-categories'
+      path: '/admin/distributor-categories'
+      fullPath: '/app/admin/distributor-categories'
+      preLoaderRoute: typeof AppAdminDistributorCategoriesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/commissions': {
       id: '/app/admin/commissions'
       path: '/admin/commissions'
       fullPath: '/app/admin/commissions'
       preLoaderRoute: typeof AppAdminCommissionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/brokerage-imports': {
+      id: '/app/admin/brokerage-imports'
+      path: '/admin/brokerage-imports'
+      fullPath: '/app/admin/brokerage-imports'
+      preLoaderRoute: typeof AppAdminBrokerageImportsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/branches': {
@@ -760,7 +800,9 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppAdminBranchesRoute: typeof AppAdminBranchesRoute
+  AppAdminBrokerageImportsRoute: typeof AppAdminBrokerageImportsRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
+  AppAdminDistributorCategoriesRoute: typeof AppAdminDistributorCategoriesRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRoute
   AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
@@ -795,7 +837,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppAdminBranchesRoute: AppAdminBranchesRoute,
+  AppAdminBrokerageImportsRoute: AppAdminBrokerageImportsRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
+  AppAdminDistributorCategoriesRoute: AppAdminDistributorCategoriesRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRoute,
   AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
