@@ -216,3 +216,62 @@ export const RM_MAPPINGS_FIXTURE: RmMapping[] = RMS_FIXTURE.map((rm, i) => ({
   status: i === 3 ? "pending" : "active",
   updatedAt: rm.updatedAt,
 }));
+
+export const BROKERAGE_IMPORTS_FIXTURE: BrokerageImport[] = (() => {
+  const r = seeded(91);
+  const sources = ["BSE", "NSE", "CAMS", "Karvy"] as const;
+  const statuses = ["processed", "processed", "processed", "processed", "processing", "failed"] as const;
+  const uploaders = ["Ops Admin", "System", "Finance Bot", "Reconciliation Bot"];
+  const out: BrokerageImport[] = [];
+  for (let i = 0; i < 22; i++) {
+    const src = sources[Math.floor(r() * sources.length)]!;
+    const status = statuses[Math.floor(r() * statuses.length)]!;
+    const d = new Date("2026-04-16");
+    d.setDate(d.getDate() - Math.floor(r() * 90));
+    const records = Math.round(800 + r() * 7200);
+    const errors = status === "failed" ? Math.round(40 + r() * 200) : status === "processing" ? 0 : Math.round(r() * 12);
+    out.push({
+      id: `bk_${i.toString().padStart(4, "0")}`,
+      fileName: `${src.toLowerCase()}_brokerage_${d.toISOString().slice(0, 10).replace(/-/g, "")}.csv`,
+      source: src,
+      uploadedBy: uploaders[Math.floor(r() * uploaders.length)]!,
+      importedAt: d.toISOString(),
+      records,
+      errors,
+      amount: Math.round(250_000 + r() * 18_000_000),
+      status,
+    });
+  }
+  return out.sort((a, b) => b.importedAt.localeCompare(a.importedAt));
+})();
+
+export const DISTRIBUTOR_CATEGORIES_FIXTURE: DistributorCategory[] = [
+  { id: "dc_pt", name: "Platinum", minAum: 500_000_000, maxAum: null, baseTrailPct: 1.10, bonusTrailPct: 0.25, distributorCount: 12, effectiveFrom: "2025-04-01", status: "active", updatedAt: "2026-03-12T10:00:00Z" },
+  { id: "dc_gd", name: "Gold", minAum: 200_000_000, maxAum: 500_000_000, baseTrailPct: 0.90, bonusTrailPct: 0.15, distributorCount: 38, effectiveFrom: "2025-04-01", status: "active", updatedAt: "2026-03-12T10:00:00Z" },
+  { id: "dc_sl", name: "Silver", minAum: 50_000_000, maxAum: 200_000_000, baseTrailPct: 0.70, bonusTrailPct: 0.10, distributorCount: 86, effectiveFrom: "2025-04-01", status: "active", updatedAt: "2026-03-12T10:00:00Z" },
+  { id: "dc_bz", name: "Bronze", minAum: 0, maxAum: 50_000_000, baseTrailPct: 0.50, bonusTrailPct: 0.00, distributorCount: 142, effectiveFrom: "2025-04-01", status: "active", updatedAt: "2026-03-12T10:00:00Z" },
+];
+
+export const PAYOUT_CYCLE_SUMMARIES_FIXTURE: PayoutCycleSummary[] = (() => {
+  const r = seeded(53);
+  const cycles = ["Nov 2025", "Dec 2025", "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026"];
+  return cycles.map((cycle, i) => {
+    const base = 14_000_000 + i * 1_400_000 + r() * 2_000_000;
+    const platinum = Math.round(base * 0.42);
+    const gold = Math.round(base * 0.30);
+    const silver = Math.round(base * 0.20);
+    const bronze = Math.round(base * 0.08);
+    const total = platinum + gold + silver + bronze;
+    return {
+      cycle,
+      totalPayouts: total,
+      brokerageImported: Math.round(total * (1.18 + r() * 0.08)),
+      byCategory: [
+        { category: "Platinum", amount: platinum },
+        { category: "Gold", amount: gold },
+        { category: "Silver", amount: silver },
+        { category: "Bronze", amount: bronze },
+      ],
+    };
+  });
+})();
