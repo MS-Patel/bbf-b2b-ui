@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Search, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { OrderStats } from "@/features/orders/components/order-stats";
 import { OrdersTable } from "@/features/orders/components/orders-table";
-import { PlaceOrderSheet } from "@/features/orders/components/place-order-sheet";
 import { useOrdersQuery } from "@/features/orders/api";
 import type { OrderStatus, OrderType, PlacedByRole } from "@/types/orders";
 
@@ -19,6 +19,12 @@ interface Props {
   showPlacedBy?: boolean;
   preselectedClientId?: string;
 }
+
+const NEW_ORDER_ROUTE: Record<Props["scope"], "/app/admin/orders/new" | "/app/rm/orders/new" | "/app/distributor/orders/new"> = {
+  all: "/app/admin/orders/new",
+  rm: "/app/rm/orders/new",
+  distributor: "/app/distributor/orders/new",
+};
 
 export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlacedBy, preselectedClientId }: Props) {
   const { data, isLoading } = useOrdersQuery({ scope, ownerId: scope === "all" ? undefined : placedBy.id });
@@ -38,6 +44,8 @@ export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlac
     [orders, type, status, search],
   );
 
+  const newOrderTo = NEW_ORDER_ROUTE[scope];
+
   return (
     <>
       <PageHeader
@@ -45,16 +53,14 @@ export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlac
         title="Orders register"
         description={description}
         actions={
-          <PlaceOrderSheet
-            scope={scope}
-            placedBy={placedBy}
-            preselectedClientId={preselectedClientId}
-            trigger={
-              <Button className="gap-1.5">
-                <ShoppingCart className="h-4 w-4" /> New order
-              </Button>
-            }
-          />
+          <Button asChild className="gap-1.5">
+            <Link
+              to={newOrderTo}
+              search={{ clientId: preselectedClientId }}
+            >
+              <ShoppingCart className="h-4 w-4" /> New order
+            </Link>
+          </Button>
         }
       />
       <div className="space-y-5 px-6 py-6 sm:px-8">

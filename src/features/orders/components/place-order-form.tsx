@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Search, ShoppingCart, AlertTriangle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, Search, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/layout/page-header";
 import { StatusBadge } from "@/components/feedback/status-badge";
 import { useEligibleClientsQuery, useMandatesQuery, usePlaceOrderMutation, useSchemesQuery } from "@/features/orders/api";
 import { ORDER_TYPE_LABEL, type OrderType, type PlacedByRole, type SchemeLite } from "@/types/orders";
@@ -18,9 +19,11 @@ import { formatCompactINR, formatINR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  trigger: ReactNode;
   scope: "all" | "rm" | "distributor";
   placedBy: { id: string; name: string; role: PlacedByRole };
+  eyebrow: string;
+  /** Where to navigate after success / cancel (the orders register). */
+  backTo: "/app/admin/orders" | "/app/rm/orders" | "/app/distributor/orders";
   /** Optional pre-selected client (e.g., deep-link from converted lead). */
   preselectedClientId?: string;
 }
@@ -30,15 +33,14 @@ type Step = 1 | 2 | 3;
 const RISK_LEVEL: Record<string, number> = { Conservative: 1, Moderate: 2, Aggressive: 3 };
 const SCHEME_RISK: Record<string, number> = { Low: 1, Moderate: 2, High: 3, "Very High": 4 };
 
-export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId }: Props) {
-  const [open, setOpen] = useState(false);
+export function PlaceOrderForm({ scope, placedBy, eyebrow, backTo, preselectedClientId }: Props) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>(1);
   const [client, setClient] = useState<ClientLite | null>(null);
   const [type, setType] = useState<OrderType>("lump_sum");
   const [scheme, setScheme] = useState<SchemeLite | null>(null);
   const [schemeQuery, setSchemeQuery] = useState("");
 
-  // Type-specific state
   const [amount, setAmount] = useState<number>(10000);
   const [folio, setFolio] = useState("");
   const [paymentMode, setPaymentMode] = useState<"netbanking" | "upi" | "neft">("netbanking");
@@ -53,7 +55,6 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
   const [payoutBank, setPayoutBank] = useState("HDFC Bank ••••2210");
   const [reference, setReference] = useState("");
 
-  // Consent
   const [investorConsent, setInvestorConsent] = useState(false);
   const [riskAck, setRiskAck] = useState(false);
   const [cutoffAck, setCutoffAck] = useState(false);
@@ -64,44 +65,15 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
   const { data: mandates } = useMandatesQuery(client?.id);
   const place = usePlaceOrderMutation();
 
-  // Preselect client if provided when sheet opens
   useEffect(() => {
-    if (open && preselectedClientId && clients && !client) {
+    if (preselectedClientId && clients && !client) {
       const found = clients.find((c) => c.id === preselectedClientId);
       if (found) {
         setClient(found);
         setStep(2);
       }
     }
-  }, [open, preselectedClientId, clients, client]);
-
-  function reset() {
-    setStep(1);
-    setClient(null);
-    setScheme(null);
-    setSchemeQuery("");
-    setType("lump_sum");
-    setAmount(10000);
-    setFolio("");
-    setPaymentMode("netbanking");
-    setFrequency("monthly");
-    setSipDate(5);
-    setTenure("36");
-    setMandateId("");
-    setUnits(0);
-    setSwitchAll(false);
-    setSwitchTargetCode("");
-    setRedeemAll(false);
-    setReference("");
-    setInvestorConsent(false);
-    setRiskAck(false);
-    setCutoffAck(false);
-  }
-
-  function handleOpenChange(next: boolean) {
-    setOpen(next);
-    if (!next) reset();
-  }
+  }, [preselectedClientId, clients, client]);
 
   const filteredClients = useMemo(() => {
     if (!clients) return [];
@@ -125,6 +97,10 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
           : amount >= 500 || redeemAll);
 
   const canSubmit = investorConsent && riskAck && cutoffAck && !place.isPending;
+
+  function goBackToRegister() {
+    navigate({ to: backTo });
+  }
 
   async function submit() {
     if (!client || !scheme) return;
@@ -164,7 +140,7 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
       toast.success("Order placed", {
         description: `${ORDER_TYPE_LABEL[order.type]} for ${client.fullName} — ${order.id}`,
       });
-      handleOpenChange(false);
+      navigate({ to: backTo });
     } catch (e) {
       const message = e instanceof Error ? e.message : "Could not place order";
       toast.error("Order failed", { description: message });
@@ -172,22 +148,23 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
   }
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-[640px]">
-        <SheetHeader className="border-b border-border px-6 py-4">
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4" /> Place order on behalf of investor
-          </SheetTitle>
-          <SheetDescription>
-            Step {step} of 3 — {step === 1 ? "Pick client" : step === 2 ? "Order ticket" : "Confirm & consent"}
-          </SheetDescription>
-          <Stepper step={step} />
-        </SheetHeader>
+    <>
+      <PageHeader
+        eyebrow={eyebrow}
+        title="Place order on behalf of investor"
+        description={`Step ${step} of 3 — ${step === 1 ? "Pick client" : step === 2 ? "Order ticket" : "Confirm & consent"}`}
+        actions={
+          <Button variant="ghost" className="gap-1.5" onClick={goBackToRegister}>
+            <ArrowLeft className="h-4 w-4" /> Back to orders
+          </Button>
+        }
+      />
+      <div className="mx-auto w-full max-w-3xl space-y-5 px-6 py-6 sm:px-8">
+        <Stepper step={step} />
 
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          {step === 1 && (
-            <div className="space-y-4">
+        {step === 1 && (
+          <Card className="shadow-card">
+            <CardContent className="space-y-4 p-5">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} placeholder="Search verified clients…" className="pl-9" />
@@ -226,11 +203,13 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
                   </button>
                 ))}
               </div>
-            </div>
-          )}
+            </CardContent>
+          </Card>
+        )}
 
-          {step === 2 && client && (
-            <div className="space-y-5">
+        {step === 2 && client && (
+          <Card className="shadow-card">
+            <CardContent className="space-y-5 p-5">
               <Card className="bg-secondary/30">
                 <CardContent className="flex items-center justify-between p-3">
                   <div>
@@ -317,11 +296,13 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
                   </span>
                 </div>
               )}
-            </div>
-          )}
+            </CardContent>
+          </Card>
+        )}
 
-          {step === 3 && client && scheme && (
-            <div className="space-y-5">
+        {step === 3 && client && scheme && (
+          <Card className="shadow-card">
+            <CardContent className="space-y-5 p-5">
               <Card>
                 <CardContent className="space-y-2 p-4 text-sm">
                   <Row k="Investor" v={client.fullName} />
@@ -350,19 +331,23 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
                 <ConsentRow checked={riskAck} onChange={setRiskAck} label={riskMismatch ? "I acknowledge the scheme risk exceeds the investor's profile" : "Risk profile reviewed with investor"} />
                 <ConsentRow checked={cutoffAck} onChange={setCutoffAck} label={`I understand the ${scheme.cutoff} cut-off applies for NAV allocation`} />
               </div>
-            </div>
-          )}
-        </div>
+            </CardContent>
+          </Card>
+        )}
 
-        <div className="flex items-center justify-between gap-2 border-t border-border bg-card px-6 py-3">
+        <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-card px-5 py-3 shadow-card">
           {step > 1 ? (
             <Button variant="ghost" className="gap-1.5" onClick={() => setStep((step - 1) as Step)}>
               <ArrowLeft className="h-4 w-4" /> Back
             </Button>
           ) : (
-            <span />
+            <Button variant="ghost" className="gap-1.5" onClick={goBackToRegister}>
+              Cancel
+            </Button>
           )}
-          {step === 1 ? null : step === 2 ? (
+          {step === 1 ? (
+            <span />
+          ) : step === 2 ? (
             <Button disabled={!canProceedStep2} className="gap-1.5" onClick={() => setStep(3)}>
               Review <ArrowRight className="h-4 w-4" />
             </Button>
@@ -372,14 +357,14 @@ export function PlaceOrderSheet({ trigger, scope, placedBy, preselectedClientId 
             </Button>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+    </>
   );
 }
 
 function Stepper({ step }: { step: Step }) {
   return (
-    <div className="mt-3 flex items-center gap-2">
+    <div className="flex items-center gap-2">
       {[1, 2, 3].map((n) => (
         <div key={n} className={cn("h-1.5 flex-1 rounded-full bg-muted", step >= n && "bg-primary")} />
       ))}
