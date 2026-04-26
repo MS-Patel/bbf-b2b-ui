@@ -171,3 +171,41 @@ export interface RmMapping {
   status: MappingStatus;
   updatedAt: string;
 }
+
+export type BrokerageImportStatus = "processed" | "processing" | "failed";
+export type BrokerageSource = "BSE" | "NSE" | "CAMS" | "Karvy";
+
+export interface BrokerageImport {
+  id: string;
+  fileName: string;
+  source: BrokerageSource;
+  uploadedBy: string;
+  importedAt: string;
+  records: number;
+  errors: number;
+  amount: number;
+  status: BrokerageImportStatus;
+}
+
+export type DistributorCategoryName = "Platinum" | "Gold" | "Silver" | "Bronze";
+export type DistributorCategoryStatus = "active" | "inactive";
+
+export interface DistributorCategory {
+  id: string;
+  name: DistributorCategoryName;
+  minAum: number;
+  maxAum: number | null;
+  baseTrailPct: number;
+  bonusTrailPct: number;
+  distributorCount: number;
+  effectiveFrom: string;
+  status: DistributorCategoryStatus;
+  updatedAt: string;
+}
+
+export interface PayoutCycleSummary {
+  cycle: string;
+  totalPayouts: number;
+  brokerageImported: number;
+  byCategory: Array<{ category: DistributorCategoryName; amount: number }>;
+}
