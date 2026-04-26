@@ -101,3 +101,27 @@ export function useUserMappingsQuery() {
     staleTime: 60_000,
   });
 }
+
+export function useBrokerageImportsQuery() {
+  return useQuery({
+    queryKey: ["admin", "brokerage-imports"],
+    queryFn: () => delay(BROKERAGE_IMPORTS_FIXTURE),
+    staleTime: 60_000,
+  });
+}
+
+export function useDistributorCategoriesQuery() {
+  return useQuery({
+    queryKey: ["admin", "distributor-categories"],
+    queryFn: () => delay(DISTRIBUTOR_CATEGORIES_FIXTURE),
+    staleTime: 60_000,
+  });
+}
+
+export function usePayoutCycleSummariesQuery() {
+  return useQuery({
+    queryKey: ["admin", "payout-cycle-summaries"],
+    queryFn: () => delay(PAYOUT_CYCLE_SUMMARIES_FIXTURE),
+    staleTime: 60_000,
+  });
+}

@@ -10,6 +10,7 @@ import {
   Building2,
   Bell,
   Database,
+  Layers,
   Settings,
   ShoppingCart,
   type LucideIcon,
@@ -52,6 +53,8 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Commissions", to: "/app/admin/commissions", icon: HandCoins },
       { label: "Payouts", to: "/app/admin/payouts", icon: Wallet },
+      { label: "Brokerage Imports", to: "/app/admin/brokerage-imports", icon: FileSpreadsheet },
+      { label: "Distributor Categories", to: "/app/admin/distributor-categories", icon: Layers },
     ],
   },
   {
