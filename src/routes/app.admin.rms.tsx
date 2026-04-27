@@ -12,6 +12,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { ACCOUNT_TYPES, STATE_CHOICES } from "@/features/admin/form-constants";
 import { useBranchesQuery, useDistributorsQuery, useRmsQuery } from "@/features/admin/api";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { formatCompactINR, formatDate } from "@/lib/format";
@@ -67,5 +71,100 @@ function RowActions({ rm, onEdit }: { rm: RmProfile; onEdit: (rm: RmProfile) => 
 
 function RmDialog({ open, onOpenChange, rm, branches, distributors }: { open: boolean; onOpenChange: (open: boolean) => void; rm: RmProfile | null; branches: Array<{ id: string; name: string }>; distributors: Array<{ id: string; name: string }> }) {
   const save = () => { toast.success(rm ? "RM updated" : "RM created"); onOpenChange(false); };
-  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent><DialogHeader><DialogTitle>{rm ? "Update RM" : "Create RM"}</DialogTitle><DialogDescription>Mock form for RM profile, branch assignment, and distributor allocation.</DialogDescription></DialogHeader><div className="grid gap-4 sm:grid-cols-2"><div className="space-y-2"><Label>Name</Label><Input defaultValue={rm?.name} placeholder="RM name" /></div><div className="space-y-2"><Label>Employee code</Label><Input defaultValue={rm?.employeeCode} placeholder="RM-MUM-001" /></div><div className="space-y-2"><Label>Email</Label><Input defaultValue={rm?.email} placeholder="rm@buybestfin.app" /></div><div className="space-y-2"><Label>Phone</Label><Input defaultValue={rm?.phone} placeholder="+91…" /></div><div className="space-y-2"><Label>Branch</Label><Select defaultValue={rm?.branchId ?? branches[0]?.id}><SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger><SelectContent>{branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select></div><div className="space-y-2"><Label>Primary distributor</Label><Select defaultValue={rm?.distributorIds[0] ?? distributors[0]?.id}><SelectTrigger><SelectValue placeholder="Select distributor" /></SelectTrigger><SelectContent>{distributors.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent></Select></div></div><DialogFooter><Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button><Button onClick={save}>{rm ? "Save changes" : "Create RM"}</Button></DialogFooter></DialogContent></Dialog>;
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{rm ? "Update RM" : "Create RM"}</DialogTitle>
+          <DialogDescription>Mock form mirroring the Django RMProfile model — identity, address, contact, personal, and bank details.</DialogDescription>
+        </DialogHeader>
+
+        <FormSection title="Identity & assignment">
+          <Field label="Full name"><Input defaultValue={rm?.name} placeholder="RM name" /></Field>
+          <Field label="Employee code"><Input defaultValue={rm?.employeeCode} placeholder="RM-MUM-001" /></Field>
+          <Field label="Email"><Input type="email" defaultValue={rm?.email} placeholder="rm@buybestfin.app" /></Field>
+          <Field label="Branch">
+            <Select defaultValue={rm?.branchId ?? branches[0]?.id}>
+              <SelectTrigger><SelectValue placeholder="Select branch" /></SelectTrigger>
+              <SelectContent>{branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field label="Primary distributor">
+            <Select defaultValue={rm?.distributorIds[0] ?? distributors[0]?.id}>
+              <SelectTrigger><SelectValue placeholder="Select distributor" /></SelectTrigger>
+              <SelectContent>{distributors.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field label="Active">
+            <div className="flex h-10 items-center gap-3 rounded-md border border-input px-3">
+              <Switch defaultChecked={rm?.status !== "suspended"} id="rm-active" />
+              <Label htmlFor="rm-active" className="text-sm font-normal text-muted-foreground">RM profile is active</Label>
+            </div>
+          </Field>
+        </FormSection>
+
+        <FormSection title="Contact details">
+          <Field label="Mobile"><Input defaultValue={rm?.phone} placeholder="+91 98xxxxxxxx" /></Field>
+          <Field label="Alternate mobile"><Input placeholder="+91…" /></Field>
+          <Field label="Alternate email"><Input type="email" placeholder="alt@example.in" /></Field>
+        </FormSection>
+
+        <FormSection title="Address">
+          <Field label="Address" className="sm:col-span-2"><Textarea rows={2} placeholder="Street, building, area" /></Field>
+          <Field label="City"><Input placeholder="Mumbai" /></Field>
+          <Field label="Pincode"><Input maxLength={6} placeholder="400001" /></Field>
+          <Field label="State">
+            <Select>
+              <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+              <SelectContent>{STATE_CHOICES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field label="Country"><Input defaultValue="India" /></Field>
+        </FormSection>
+
+        <FormSection title="Personal & business">
+          <Field label="Date of birth"><Input type="date" /></Field>
+          <Field label="PAN"><Input maxLength={10} placeholder="ABCDE1234F" className="uppercase" /></Field>
+          <Field label="GSTIN"><Input maxLength={15} placeholder="22ABCDE1234F1Z5" className="uppercase" /></Field>
+        </FormSection>
+
+        <FormSection title="Bank details">
+          <Field label="Bank name"><Input placeholder="HDFC Bank" /></Field>
+          <Field label="Account number"><Input placeholder="00112233445566" /></Field>
+          <Field label="IFSC code"><Input maxLength={11} placeholder="HDFC0000123" className="uppercase" /></Field>
+          <Field label="Account type">
+            <Select defaultValue="SB">
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{ACCOUNT_TYPES.map((a) => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+          <Field label="Branch name"><Input placeholder="Andheri West" /></Field>
+        </FormSection>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button onClick={save}>{rm ? "Save changes" : "Create RM"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <Separator />
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+      <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`space-y-2 ${className ?? ""}`}>
+      <Label>{label}</Label>
+      {children}
+    </div>
+  );
 }
