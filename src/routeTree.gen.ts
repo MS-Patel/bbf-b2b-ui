@@ -48,9 +48,12 @@ import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.comm
 import { Route as AppAdminBrokerageImportsRouteImport } from './routes/app.admin.brokerage-imports'
 import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
 import { Route as AppRmOrdersNewRouteImport } from './routes/app.rm.orders.new'
+import { Route as AppRmOnboardingNewRouteImport } from './routes/app.rm.onboarding.new'
 import { Route as AppInvestorPortfolioHoldingIdRouteImport } from './routes/app.investor.portfolio.$holdingId'
 import { Route as AppDistributorOrdersNewRouteImport } from './routes/app.distributor.orders.new'
+import { Route as AppDistributorOnboardingNewRouteImport } from './routes/app.distributor.onboarding.new'
 import { Route as AppAdminOrdersNewRouteImport } from './routes/app.admin.orders.new'
+import { Route as AppAdminOnboardingNewRouteImport } from './routes/app.admin.onboarding.new'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -251,6 +254,11 @@ const AppRmOrdersNewRoute = AppRmOrdersNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppRmOrdersRoute,
 } as any)
+const AppRmOnboardingNewRoute = AppRmOnboardingNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppRmOnboardingRoute,
+} as any)
 const AppInvestorPortfolioHoldingIdRoute =
   AppInvestorPortfolioHoldingIdRouteImport.update({
     id: '/$holdingId',
@@ -262,10 +270,21 @@ const AppDistributorOrdersNewRoute = AppDistributorOrdersNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppDistributorOrdersRoute,
 } as any)
+const AppDistributorOnboardingNewRoute =
+  AppDistributorOnboardingNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AppDistributorOnboardingRoute,
+  } as any)
 const AppAdminOrdersNewRoute = AppAdminOrdersNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AppAdminOrdersRoute,
+} as any)
+const AppAdminOnboardingNewRoute = AppAdminOnboardingNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppAdminOnboardingRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -282,7 +301,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
-  '/app/admin/onboarding': typeof AppAdminOnboardingRoute
+  '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/orders': typeof AppAdminOrdersRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
@@ -291,7 +310,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/distributor/onboarding': typeof AppDistributorOnboardingRoute
+  '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/distributor/orders': typeof AppDistributorOrdersRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -301,15 +320,18 @@ export interface FileRoutesByFullPath {
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
-  '/app/rm/onboarding': typeof AppRmOnboardingRoute
+  '/app/rm/onboarding': typeof AppRmOnboardingRouteWithChildren
   '/app/rm/orders': typeof AppRmOrdersRouteWithChildren
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
+  '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
+  '/app/distributor/onboarding/new': typeof AppDistributorOnboardingNewRoute
   '/app/distributor/orders/new': typeof AppDistributorOrdersNewRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
+  '/app/rm/onboarding/new': typeof AppRmOnboardingNewRoute
   '/app/rm/orders/new': typeof AppRmOrdersNewRoute
 }
 export interface FileRoutesByTo {
@@ -326,7 +348,7 @@ export interface FileRoutesByTo {
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
-  '/app/admin/onboarding': typeof AppAdminOnboardingRoute
+  '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/orders': typeof AppAdminOrdersRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
@@ -335,7 +357,7 @@ export interface FileRoutesByTo {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/distributor/onboarding': typeof AppDistributorOnboardingRoute
+  '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/distributor/orders': typeof AppDistributorOrdersRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -345,15 +367,18 @@ export interface FileRoutesByTo {
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
-  '/app/rm/onboarding': typeof AppRmOnboardingRoute
+  '/app/rm/onboarding': typeof AppRmOnboardingRouteWithChildren
   '/app/rm/orders': typeof AppRmOrdersRouteWithChildren
   '/app/admin': typeof AppAdminIndexRoute
   '/app/distributor': typeof AppDistributorIndexRoute
   '/app/investor': typeof AppInvestorIndexRoute
   '/app/rm': typeof AppRmIndexRoute
+  '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
+  '/app/distributor/onboarding/new': typeof AppDistributorOnboardingNewRoute
   '/app/distributor/orders/new': typeof AppDistributorOrdersNewRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
+  '/app/rm/onboarding/new': typeof AppRmOnboardingNewRoute
   '/app/rm/orders/new': typeof AppRmOrdersNewRoute
 }
 export interface FileRoutesById {
@@ -371,7 +396,7 @@ export interface FileRoutesById {
   '/app/admin/distributors': typeof AppAdminDistributorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
-  '/app/admin/onboarding': typeof AppAdminOnboardingRoute
+  '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/orders': typeof AppAdminOrdersRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
@@ -380,7 +405,7 @@ export interface FileRoutesById {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
-  '/app/distributor/onboarding': typeof AppDistributorOnboardingRoute
+  '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/distributor/orders': typeof AppDistributorOrdersRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
   '/app/investor/portfolio': typeof AppInvestorPortfolioRouteWithChildren
@@ -390,15 +415,18 @@ export interface FileRoutesById {
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRoute
   '/app/rm/earnings': typeof AppRmEarningsRoute
-  '/app/rm/onboarding': typeof AppRmOnboardingRoute
+  '/app/rm/onboarding': typeof AppRmOnboardingRouteWithChildren
   '/app/rm/orders': typeof AppRmOrdersRouteWithChildren
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/distributor/': typeof AppDistributorIndexRoute
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
+  '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
+  '/app/distributor/onboarding/new': typeof AppDistributorOnboardingNewRoute
   '/app/distributor/orders/new': typeof AppDistributorOrdersNewRoute
   '/app/investor/portfolio/$holdingId': typeof AppInvestorPortfolioHoldingIdRoute
+  '/app/rm/onboarding/new': typeof AppRmOnboardingNewRoute
   '/app/rm/orders/new': typeof AppRmOrdersNewRoute
 }
 export interface FileRouteTypes {
@@ -442,9 +470,12 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
+    | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
+    | '/app/distributor/onboarding/new'
     | '/app/distributor/orders/new'
     | '/app/investor/portfolio/$holdingId'
+    | '/app/rm/onboarding/new'
     | '/app/rm/orders/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -486,9 +517,12 @@ export interface FileRouteTypes {
     | '/app/distributor'
     | '/app/investor'
     | '/app/rm'
+    | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
+    | '/app/distributor/onboarding/new'
     | '/app/distributor/orders/new'
     | '/app/investor/portfolio/$holdingId'
+    | '/app/rm/onboarding/new'
     | '/app/rm/orders/new'
   id:
     | '__root__'
@@ -530,9 +564,12 @@ export interface FileRouteTypes {
     | '/app/distributor/'
     | '/app/investor/'
     | '/app/rm/'
+    | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
+    | '/app/distributor/onboarding/new'
     | '/app/distributor/orders/new'
     | '/app/investor/portfolio/$holdingId'
+    | '/app/rm/onboarding/new'
     | '/app/rm/orders/new'
   fileRoutesById: FileRoutesById
 }
@@ -818,6 +855,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRmOrdersNewRouteImport
       parentRoute: typeof AppRmOrdersRoute
     }
+    '/app/rm/onboarding/new': {
+      id: '/app/rm/onboarding/new'
+      path: '/new'
+      fullPath: '/app/rm/onboarding/new'
+      preLoaderRoute: typeof AppRmOnboardingNewRouteImport
+      parentRoute: typeof AppRmOnboardingRoute
+    }
     '/app/investor/portfolio/$holdingId': {
       id: '/app/investor/portfolio/$holdingId'
       path: '/$holdingId'
@@ -832,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDistributorOrdersNewRouteImport
       parentRoute: typeof AppDistributorOrdersRoute
     }
+    '/app/distributor/onboarding/new': {
+      id: '/app/distributor/onboarding/new'
+      path: '/new'
+      fullPath: '/app/distributor/onboarding/new'
+      preLoaderRoute: typeof AppDistributorOnboardingNewRouteImport
+      parentRoute: typeof AppDistributorOnboardingRoute
+    }
     '/app/admin/orders/new': {
       id: '/app/admin/orders/new'
       path: '/new'
@@ -839,8 +890,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminOrdersNewRouteImport
       parentRoute: typeof AppAdminOrdersRoute
     }
+    '/app/admin/onboarding/new': {
+      id: '/app/admin/onboarding/new'
+      path: '/new'
+      fullPath: '/app/admin/onboarding/new'
+      preLoaderRoute: typeof AppAdminOnboardingNewRouteImport
+      parentRoute: typeof AppAdminOnboardingRoute
+    }
   }
 }
+
+interface AppAdminOnboardingRouteChildren {
+  AppAdminOnboardingNewRoute: typeof AppAdminOnboardingNewRoute
+}
+
+const AppAdminOnboardingRouteChildren: AppAdminOnboardingRouteChildren = {
+  AppAdminOnboardingNewRoute: AppAdminOnboardingNewRoute,
+}
+
+const AppAdminOnboardingRouteWithChildren =
+  AppAdminOnboardingRoute._addFileChildren(AppAdminOnboardingRouteChildren)
 
 interface AppAdminOrdersRouteChildren {
   AppAdminOrdersNewRoute: typeof AppAdminOrdersNewRoute
@@ -853,6 +922,20 @@ const AppAdminOrdersRouteChildren: AppAdminOrdersRouteChildren = {
 const AppAdminOrdersRouteWithChildren = AppAdminOrdersRoute._addFileChildren(
   AppAdminOrdersRouteChildren,
 )
+
+interface AppDistributorOnboardingRouteChildren {
+  AppDistributorOnboardingNewRoute: typeof AppDistributorOnboardingNewRoute
+}
+
+const AppDistributorOnboardingRouteChildren: AppDistributorOnboardingRouteChildren =
+  {
+    AppDistributorOnboardingNewRoute: AppDistributorOnboardingNewRoute,
+  }
+
+const AppDistributorOnboardingRouteWithChildren =
+  AppDistributorOnboardingRoute._addFileChildren(
+    AppDistributorOnboardingRouteChildren,
+  )
 
 interface AppDistributorOrdersRouteChildren {
   AppDistributorOrdersNewRoute: typeof AppDistributorOrdersNewRoute
@@ -876,6 +959,18 @@ const AppInvestorPortfolioRouteChildren: AppInvestorPortfolioRouteChildren = {
 const AppInvestorPortfolioRouteWithChildren =
   AppInvestorPortfolioRoute._addFileChildren(AppInvestorPortfolioRouteChildren)
 
+interface AppRmOnboardingRouteChildren {
+  AppRmOnboardingNewRoute: typeof AppRmOnboardingNewRoute
+}
+
+const AppRmOnboardingRouteChildren: AppRmOnboardingRouteChildren = {
+  AppRmOnboardingNewRoute: AppRmOnboardingNewRoute,
+}
+
+const AppRmOnboardingRouteWithChildren = AppRmOnboardingRoute._addFileChildren(
+  AppRmOnboardingRouteChildren,
+)
+
 interface AppRmOrdersRouteChildren {
   AppRmOrdersNewRoute: typeof AppRmOrdersNewRoute
 }
@@ -898,7 +993,7 @@ interface AppRouteChildren {
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRoute
   AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
-  AppAdminOnboardingRoute: typeof AppAdminOnboardingRoute
+  AppAdminOnboardingRoute: typeof AppAdminOnboardingRouteWithChildren
   AppAdminOrdersRoute: typeof AppAdminOrdersRouteWithChildren
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
   AppAdminReconciliationRoute: typeof AppAdminReconciliationRoute
@@ -907,7 +1002,7 @@ interface AppRouteChildren {
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
   AppDistributorCommissionsRoute: typeof AppDistributorCommissionsRoute
-  AppDistributorOnboardingRoute: typeof AppDistributorOnboardingRoute
+  AppDistributorOnboardingRoute: typeof AppDistributorOnboardingRouteWithChildren
   AppDistributorOrdersRoute: typeof AppDistributorOrdersRouteWithChildren
   AppInvestorGoalsRoute: typeof AppInvestorGoalsRoute
   AppInvestorPortfolioRoute: typeof AppInvestorPortfolioRouteWithChildren
@@ -917,7 +1012,7 @@ interface AppRouteChildren {
   AppRmClientsRoute: typeof AppRmClientsRoute
   AppRmDistributorsRoute: typeof AppRmDistributorsRoute
   AppRmEarningsRoute: typeof AppRmEarningsRoute
-  AppRmOnboardingRoute: typeof AppRmOnboardingRoute
+  AppRmOnboardingRoute: typeof AppRmOnboardingRouteWithChildren
   AppRmOrdersRoute: typeof AppRmOrdersRouteWithChildren
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppDistributorIndexRoute: typeof AppDistributorIndexRoute
@@ -935,7 +1030,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminDistributorsRoute: AppAdminDistributorsRoute,
   AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
-  AppAdminOnboardingRoute: AppAdminOnboardingRoute,
+  AppAdminOnboardingRoute: AppAdminOnboardingRouteWithChildren,
   AppAdminOrdersRoute: AppAdminOrdersRouteWithChildren,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
   AppAdminReconciliationRoute: AppAdminReconciliationRoute,
@@ -944,7 +1039,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
   AppDistributorCommissionsRoute: AppDistributorCommissionsRoute,
-  AppDistributorOnboardingRoute: AppDistributorOnboardingRoute,
+  AppDistributorOnboardingRoute: AppDistributorOnboardingRouteWithChildren,
   AppDistributorOrdersRoute: AppDistributorOrdersRouteWithChildren,
   AppInvestorGoalsRoute: AppInvestorGoalsRoute,
   AppInvestorPortfolioRoute: AppInvestorPortfolioRouteWithChildren,
@@ -954,7 +1049,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRmClientsRoute: AppRmClientsRoute,
   AppRmDistributorsRoute: AppRmDistributorsRoute,
   AppRmEarningsRoute: AppRmEarningsRoute,
-  AppRmOnboardingRoute: AppRmOnboardingRoute,
+  AppRmOnboardingRoute: AppRmOnboardingRouteWithChildren,
   AppRmOrdersRoute: AppRmOrdersRouteWithChildren,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppDistributorIndexRoute: AppDistributorIndexRoute,
