@@ -157,7 +157,7 @@ export function InviteLeadForm({ owner, eyebrow, backTo }: Props) {
                 <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
                 <SelectContent>
                   {STATE_CHOICES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
