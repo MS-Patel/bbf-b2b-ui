@@ -302,7 +302,7 @@ function EmailForm() {
           <Input id="smtpHost" {...register("smtpHost")} />
         </Field>
         <Field label="SMTP Port" htmlFor="smtpPort" error={formState.errors.smtpPort?.message}>
-          <Input id="smtpPort" type="number" {...register("smtpPort")} />
+          <Input id="smtpPort" type="number" {...register("smtpPort", { valueAsNumber: true })} />
         </Field>
         <Field label="Username" htmlFor="smtpUsername" error={formState.errors.smtpUsername?.message}>
           <Input id="smtpUsername" {...register("smtpUsername")} />
@@ -371,10 +371,10 @@ function SeriesForm() {
           <Input id="brokerCodePrefix" {...register("brokerCodePrefix")} />
         </Field>
         <Field label="Next Number" htmlFor="brokerCodeNext" error={formState.errors.brokerCodeNext?.message}>
-          <Input id="brokerCodeNext" type="number" {...register("brokerCodeNext")} />
+          <Input id="brokerCodeNext" type="number" {...register("brokerCodeNext", { valueAsNumber: true })} />
         </Field>
         <Field label="Padding (digits)" htmlFor="brokerCodePadding" error={formState.errors.brokerCodePadding?.message}>
-          <Input id="brokerCodePadding" type="number" {...register("brokerCodePadding")} />
+          <Input id="brokerCodePadding" type="number" {...register("brokerCodePadding", { valueAsNumber: true })} />
         </Field>
       </FormSection>
 
@@ -385,10 +385,10 @@ function SeriesForm() {
           <Input id="rmCodePrefix" {...register("rmCodePrefix")} />
         </Field>
         <Field label="Next Number" htmlFor="rmCodeNext" error={formState.errors.rmCodeNext?.message}>
-          <Input id="rmCodeNext" type="number" {...register("rmCodeNext")} />
+          <Input id="rmCodeNext" type="number" {...register("rmCodeNext", { valueAsNumber: true })} />
         </Field>
         <Field label="Padding (digits)" htmlFor="rmCodePadding" error={formState.errors.rmCodePadding?.message}>
-          <Input id="rmCodePadding" type="number" {...register("rmCodePadding")} />
+          <Input id="rmCodePadding" type="number" {...register("rmCodePadding", { valueAsNumber: true })} />
         </Field>
       </FormSection>
 
@@ -399,13 +399,13 @@ function SeriesForm() {
           <Input id="investorCodePrefix" {...register("investorCodePrefix")} />
         </Field>
         <Field label="Investor Next" htmlFor="investorCodeNext" hint={`Next: ${v.investorCodePrefix}${v.investorCodeNext}`}>
-          <Input id="investorCodeNext" type="number" {...register("investorCodeNext")} />
+          <Input id="investorCodeNext" type="number" {...register("investorCodeNext", { valueAsNumber: true })} />
         </Field>
         <Field label="Order Ref Prefix" htmlFor="orderRefPrefix" error={formState.errors.orderRefPrefix?.message}>
           <Input id="orderRefPrefix" {...register("orderRefPrefix")} />
         </Field>
         <Field label="Order Ref Next" htmlFor="orderRefNext" hint={`Next: ${v.orderRefPrefix}${v.orderRefNext}`}>
-          <Input id="orderRefNext" type="number" {...register("orderRefNext")} />
+          <Input id="orderRefNext" type="number" {...register("orderRefNext", { valueAsNumber: true })} />
         </Field>
         <Field label="Reset Cycle" htmlFor="resetCycle" className="md:col-span-2">
           <Select value={watch("resetCycle")} onValueChange={(val) => setValue("resetCycle", val as "never" | "yearly" | "monthly")}>
@@ -442,10 +442,10 @@ function SecurityForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <FormSection title="Session & Password Policy">
         <Field label="Session timeout (minutes)" htmlFor="sessionTimeoutMins" error={formState.errors.sessionTimeoutMins?.message}>
-          <Input id="sessionTimeoutMins" type="number" {...register("sessionTimeoutMins")} />
+          <Input id="sessionTimeoutMins" type="number" {...register("sessionTimeoutMins", { valueAsNumber: true })} />
         </Field>
         <Field label="Minimum password length" htmlFor="passwordMinLength" error={formState.errors.passwordMinLength?.message}>
-          <Input id="passwordMinLength" type="number" {...register("passwordMinLength")} />
+          <Input id="passwordMinLength" type="number" {...register("passwordMinLength", { valueAsNumber: true })} />
         </Field>
         <div className="flex items-center justify-between rounded-lg border border-border p-3 md:col-span-2">
           <div>
