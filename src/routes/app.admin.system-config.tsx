@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
@@ -79,47 +80,32 @@ const securitySchema = z.object({
 });
 
 // ---------- Helpers ----------
-function SecretInput({
-  id,
-  value,
-  onChange,
-  onBlur,
-  name,
-  placeholder,
-}: {
-  id: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: () => void;
-  name: string;
-  placeholder?: string;
-}) {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="relative">
-      <Input
-        id={id}
-        type={show ? "text" : "password"}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        name={name}
-        placeholder={placeholder}
-        className="pr-10"
-        autoComplete="off"
-      />
-      <button
-        type="button"
-        onClick={() => setShow((s) => !s)}
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
-        tabIndex={-1}
-        aria-label={show ? "Hide value" : "Show value"}
-      >
-        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </button>
-    </div>
-  );
-}
+const SecretInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, ...props }, ref) => {
+    const [show, setShow] = useState(false);
+    return (
+      <div className="relative">
+        <Input
+          ref={ref}
+          type={show ? "text" : "password"}
+          className={cn("pr-10", className)}
+          autoComplete="off"
+          {...props}
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+          tabIndex={-1}
+          aria-label={show ? "Hide value" : "Show value"}
+        >
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+    );
+  },
+);
+SecretInput.displayName = "SecretInput";
 
 function Field({
   label,
