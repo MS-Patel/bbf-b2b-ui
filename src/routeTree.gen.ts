@@ -34,6 +34,7 @@ import { Route as AppDistributorOnboardingRouteImport } from './routes/app.distr
 import { Route as AppDistributorCommissionsRouteImport } from './routes/app.distributor.commissions'
 import { Route as AppDistributorAumRouteImport } from './routes/app.distributor.aum'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
+import { Route as AppAdminSystemConfigRouteImport } from './routes/app.admin.system-config'
 import { Route as AppAdminSystemRouteImport } from './routes/app.admin.system'
 import { Route as AppAdminRmsRouteImport } from './routes/app.admin.rms'
 import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.reconciliation'
@@ -185,6 +186,11 @@ const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminSystemConfigRoute = AppAdminSystemConfigRouteImport.update({
+  id: '/admin/system-config',
+  path: '/admin/system-config',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminSystemRoute = AppAdminSystemRouteImport.update({
   id: '/admin/system',
   path: '/admin/system',
@@ -325,6 +331,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
+  '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
@@ -375,6 +382,7 @@ export interface FileRoutesByTo {
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
+  '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
@@ -426,6 +434,7 @@ export interface FileRoutesById {
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
+  '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
@@ -478,6 +487,7 @@ export interface FileRouteTypes {
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
+    | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
@@ -528,6 +538,7 @@ export interface FileRouteTypes {
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
+    | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
@@ -578,6 +589,7 @@ export interface FileRouteTypes {
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
+    | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
     | '/app/distributor/commissions'
@@ -791,6 +803,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/users'
       fullPath: '/app/admin/users'
       preLoaderRoute: typeof AppAdminUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/system-config': {
+      id: '/app/admin/system-config'
+      path: '/admin/system-config'
+      fullPath: '/app/admin/system-config'
+      preLoaderRoute: typeof AppAdminSystemConfigRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/system': {
@@ -1090,6 +1109,7 @@ interface AppRouteChildren {
   AppAdminReconciliationRoute: typeof AppAdminReconciliationRoute
   AppAdminRmsRoute: typeof AppAdminRmsRouteWithChildren
   AppAdminSystemRoute: typeof AppAdminSystemRoute
+  AppAdminSystemConfigRoute: typeof AppAdminSystemConfigRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
   AppDistributorCommissionsRoute: typeof AppDistributorCommissionsRoute
@@ -1127,6 +1147,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminReconciliationRoute: AppAdminReconciliationRoute,
   AppAdminRmsRoute: AppAdminRmsRouteWithChildren,
   AppAdminSystemRoute: AppAdminSystemRoute,
+  AppAdminSystemConfigRoute: AppAdminSystemConfigRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
   AppDistributorCommissionsRoute: AppDistributorCommissionsRoute,
