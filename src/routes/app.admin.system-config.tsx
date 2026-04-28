@@ -46,7 +46,7 @@ const integrationsSchema = z.object({
 
 const emailSchema = z.object({
   smtpHost: z.string().min(1),
-  smtpPort: z.coerce.number().min(1).max(65535),
+  smtpPort: z.number().min(1).max(65535),
   smtpUsername: z.string().min(1),
   smtpPassword: z.string().min(1),
   smtpEncryption: z.enum(["none", "tls", "ssl"]),
@@ -58,21 +58,21 @@ const emailSchema = z.object({
 
 const seriesSchema = z.object({
   brokerCodePrefix: z.string().min(1).max(8),
-  brokerCodeNext: z.coerce.number().min(1),
-  brokerCodePadding: z.coerce.number().min(1).max(10),
+  brokerCodeNext: z.number().min(1),
+  brokerCodePadding: z.number().min(1).max(10),
   rmCodePrefix: z.string().min(1).max(8),
-  rmCodeNext: z.coerce.number().min(1),
-  rmCodePadding: z.coerce.number().min(1).max(10),
+  rmCodeNext: z.number().min(1),
+  rmCodePadding: z.number().min(1).max(10),
   investorCodePrefix: z.string().min(1).max(8),
-  investorCodeNext: z.coerce.number().min(1),
+  investorCodeNext: z.number().min(1),
   orderRefPrefix: z.string().min(1).max(8),
-  orderRefNext: z.coerce.number().min(1),
+  orderRefNext: z.number().min(1),
   resetCycle: z.enum(["never", "yearly", "monthly"]),
 });
 
 const securitySchema = z.object({
-  sessionTimeoutMins: z.coerce.number().min(5).max(1440),
-  passwordMinLength: z.coerce.number().min(6).max(64),
+  sessionTimeoutMins: z.number().min(5).max(1440),
+  passwordMinLength: z.number().min(6).max(64),
   enforceMfa: z.boolean(),
   ipAllowlist: z.string().optional(),
   webhookSecret: z.string().min(8),
