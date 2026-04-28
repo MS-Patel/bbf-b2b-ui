@@ -59,7 +59,10 @@ const adminNav: NavSection[] = [
   },
   {
     label: "System",
-    items: [{ label: "Integrations & Logs", to: "/app/admin/system", icon: Activity }],
+    items: [
+      { label: "Integrations & Logs", to: "/app/admin/system", icon: Activity },
+      { label: "System Configuration", to: "/app/admin/system-config", icon: Settings },
+    ],
   },
 ];
 
