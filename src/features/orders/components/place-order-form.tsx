@@ -266,7 +266,7 @@ export function PlaceOrderForm({
               ? !!switchTargetCode && amount >= 500
               : amount >= 500); // swp
 
-  const canSubmit = investorConsent && riskAck && cutoffAck && !place.isPending && suitability.level !== "block" || (suitability.level === "block" && investorConsent && riskAck && cutoffAck && !place.isPending);
+  const canSubmit = investorConsent && riskAck && cutoffAck && !place.isPending;
 
   function persistDraft(nextStep: Step) {
     if (nextStep === 4) return; // don't save success
