@@ -56,7 +56,7 @@ export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlac
           <Button asChild className="gap-1.5">
             <Link
               to={newOrderTo}
-              search={{ clientId: preselectedClientId }}
+              search={{ clientId: preselectedClientId, draftId: undefined }}
             >
               <ShoppingCart className="h-4 w-4" /> New order
             </Link>

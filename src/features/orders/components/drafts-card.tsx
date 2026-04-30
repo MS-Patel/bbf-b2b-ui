@@ -58,7 +58,7 @@ export function DraftsCard({ ownerId, newOrderTo }: Props) {
               </div>
               <div className="flex shrink-0 flex-col gap-1">
                 <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs">
-                  <Link to={newOrderTo} search={{ draftId: d.id }}>
+                  <Link to={newOrderTo} search={{ draftId: d.id, clientId: d.clientId }}>
                     Resume
                   </Link>
                 </Button>
