@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { OrdersRegister } from "@/features/orders/components/orders-register";
 
-export const Route = createFileRoute("/app/distributor/orders")({
+export const Route = createFileRoute("/app/distributor/orders/")({
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
     if (user && user.role !== "distributor") throw redirect({ to: ROLE_HOME[user.role] });

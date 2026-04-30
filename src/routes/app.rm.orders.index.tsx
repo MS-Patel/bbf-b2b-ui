@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { ROLE_HOME } from "@/features/auth/role-routes";
 import { OrdersRegister } from "@/features/orders/components/orders-register";
 
-export const Route = createFileRoute("/app/rm/orders")({
+export const Route = createFileRoute("/app/rm/orders/")({
   validateSearch: (search: Record<string, unknown>) => ({
     clientId: typeof search.clientId === "string" ? search.clientId : undefined,
   }),
