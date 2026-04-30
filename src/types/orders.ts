@@ -1,6 +1,6 @@
 import type { UserRole } from "@/types/auth";
 
-export type OrderType = "lump_sum" | "sip" | "switch" | "redeem";
+export type OrderType = "lump_sum" | "sip" | "switch" | "redeem" | "stp" | "swp";
 
 export type OrderStatus =
   | "draft"
@@ -71,10 +71,13 @@ export interface Order {
   sipTenureMonths?: number | "perpetual";
   mandateId?: string;
   firstDebitOn?: string;
-  // Switch
+  // Switch / STP
   switchTargetCode?: string;
   switchTargetName?: string;
-  // Redeem
+  // STP / SWP
+  transferDay?: number;
+  installments?: number | "perpetual";
+  // Redeem / SWP
   redeemAll?: boolean;
   payoutBank?: string;
   // Audit
@@ -97,6 +100,8 @@ export const ORDER_TYPE_LABEL: Record<OrderType, string> = {
   sip: "SIP",
   switch: "Switch",
   redeem: "Redeem",
+  stp: "STP",
+  swp: "SWP",
 };
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
