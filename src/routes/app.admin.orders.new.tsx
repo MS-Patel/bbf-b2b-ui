@@ -6,6 +6,7 @@ import { PlaceOrderForm } from "@/features/orders/components/place-order-form";
 export const Route = createFileRoute("/app/admin/orders/new")({
   validateSearch: (search: Record<string, unknown>) => ({
     clientId: typeof search.clientId === "string" ? search.clientId : undefined,
+    draftId: typeof search.draftId === "string" ? search.draftId : undefined,
   }),
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/app/admin/orders/new")({
 
 function AdminNewOrderPage() {
   const user = useAuthStore((s) => s.user);
-  const { clientId } = Route.useSearch();
+  const { clientId, draftId } = Route.useSearch();
   const placedBy = {
     id: user?.id ?? "usr_admin_01",
     name: user?.fullName ?? "Admin Desk",
@@ -30,6 +31,7 @@ function AdminNewOrderPage() {
       eyebrow="Admin · New order"
       backTo="/app/admin/orders"
       preselectedClientId={clientId}
+      draftId={draftId}
     />
   );
 }

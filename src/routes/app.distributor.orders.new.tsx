@@ -6,6 +6,7 @@ import { PlaceOrderForm } from "@/features/orders/components/place-order-form";
 export const Route = createFileRoute("/app/distributor/orders/new")({
   validateSearch: (search: Record<string, unknown>) => ({
     clientId: typeof search.clientId === "string" ? search.clientId : undefined,
+    draftId: typeof search.draftId === "string" ? search.draftId : undefined,
   }),
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/app/distributor/orders/new")({
 
 function DistributorNewOrderPage() {
   const user = useAuthStore((s) => s.user);
-  const { clientId } = Route.useSearch();
+  const { clientId, draftId } = Route.useSearch();
   const placedBy = {
     id: user?.id ?? "usr_dist_001",
     name: user?.fullName ?? "Rohan Kapoor",
@@ -30,6 +31,7 @@ function DistributorNewOrderPage() {
       eyebrow="Distributor · New order"
       backTo="/app/distributor/orders"
       preselectedClientId={clientId}
+      draftId={draftId}
     />
   );
 }
