@@ -21,6 +21,8 @@ const TYPE_TONE: Record<OrderType, StatusTone> = {
   sip: "success",
   switch: "warning",
   redeem: "destructive",
+  stp: "info",
+  swp: "warning",
 };
 
 interface Props {
