@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/admin/orders/new")({
 
 function AdminNewOrderPage() {
   const user = useAuthStore((s) => s.user);
-  const { clientId } = Route.useSearch();
+  const { clientId, draftId } = Route.useSearch();
   const placedBy = {
     id: user?.id ?? "usr_admin_01",
     name: user?.fullName ?? "Admin Desk",
@@ -31,6 +31,7 @@ function AdminNewOrderPage() {
       eyebrow="Admin · New order"
       backTo="/app/admin/orders"
       preselectedClientId={clientId}
+      draftId={draftId}
     />
   );
 }
