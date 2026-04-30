@@ -79,6 +79,8 @@ export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlac
                 <SelectItem value="sip">SIP</SelectItem>
                 <SelectItem value="switch">Switch</SelectItem>
                 <SelectItem value="redeem">Redeem</SelectItem>
+                <SelectItem value="stp">STP</SelectItem>
+                <SelectItem value="swp">SWP</SelectItem>
               </SelectContent>
             </Select>
             <Select value={status} onValueChange={(v) => setStatus(v as OrderStatus | "all")}>
