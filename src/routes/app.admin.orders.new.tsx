@@ -6,6 +6,7 @@ import { PlaceOrderForm } from "@/features/orders/components/place-order-form";
 export const Route = createFileRoute("/app/admin/orders/new")({
   validateSearch: (search: Record<string, unknown>) => ({
     clientId: typeof search.clientId === "string" ? search.clientId : undefined,
+    draftId: typeof search.draftId === "string" ? search.draftId : undefined,
   }),
   beforeLoad: () => {
     const { user } = useAuthStore.getState();
