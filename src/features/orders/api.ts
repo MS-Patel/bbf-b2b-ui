@@ -139,6 +139,28 @@ export function usePlaceOrderMutation() {
           redeemAll: input.redeemAll,
           payoutBank: input.payoutBank,
         };
+      } else if (input.type === "stp") {
+        const target = SCHEMES_FIXTURE.find((s) => s.code === input.switchTargetCode);
+        order = {
+          ...base,
+          amount: input.amount,
+          sipFrequency: input.frequency,
+          transferDay: input.transferDay,
+          installments: input.installments,
+          switchTargetCode: input.switchTargetCode,
+          switchTargetName: target?.name,
+          firstDebitOn: nextSipDate(input.transferDay),
+        };
+      } else if (input.type === "swp") {
+        order = {
+          ...base,
+          amount: input.amount,
+          sipFrequency: input.frequency,
+          transferDay: input.transferDay,
+          installments: input.installments,
+          payoutBank: input.payoutBank,
+          firstDebitOn: nextSipDate(input.transferDay),
+        };
       }
       store = [order, ...store];
       // Auto-progress for the demo: pending → processing → completed.
