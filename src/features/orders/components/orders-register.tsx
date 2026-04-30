@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { OrderStats } from "@/features/orders/components/order-stats";
 import { OrdersTable } from "@/features/orders/components/orders-table";
+import { DraftsCard } from "@/features/orders/components/drafts-card";
 import { useOrdersQuery } from "@/features/orders/api";
 import type { OrderStatus, OrderType, PlacedByRole } from "@/types/orders";
 
@@ -65,6 +66,7 @@ export function OrdersRegister({ scope, placedBy, eyebrow, description, showPlac
       />
       <div className="space-y-5 px-6 py-6 sm:px-8">
         <OrderStats orders={orders} />
+        <DraftsCard ownerId={placedBy.id} newOrderTo={newOrderTo} />
         <Card className="shadow-card">
           <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
             <div className="relative flex-1">
