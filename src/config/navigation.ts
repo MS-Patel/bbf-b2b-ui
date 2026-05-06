@@ -46,7 +46,10 @@ const adminNav: NavSection[] = [
   },
   {
     label: "Configuration",
-    items: [{ label: "Master Data", to: "/app/admin/master-data", icon: Database }],
+    items: [
+      { label: "Master Data", to: "/app/admin/master-data", icon: Database },
+      { label: "Products & NAV", to: "/app/admin/products-upload", icon: FileSpreadsheet },
+    ],
   },
   {
     label: "Finance",
@@ -61,6 +64,7 @@ const adminNav: NavSection[] = [
     label: "System",
     items: [
       { label: "Integrations & Logs", to: "/app/admin/system", icon: Activity },
+      { label: "Integration Tools", to: "/app/admin/integration-tools", icon: Wrench },
       { label: "System Configuration", to: "/app/admin/system-config", icon: Settings },
     ],
   },
@@ -75,6 +79,7 @@ const rmNav: NavSection[] = [
       { label: "Distributors", to: "/app/rm/distributors", icon: Briefcase },
       { label: "Onboarding", to: "/app/rm/onboarding", icon: ShieldCheck },
       { label: "Orders", to: "/app/rm/orders", icon: ShoppingCart },
+      { label: "Reports", to: "/app/rm/client-reports", icon: FileSpreadsheet },
     ],
   },
   {
@@ -90,6 +95,7 @@ const distributorNav: NavSection[] = [
       { label: "Overview", to: "/app/distributor", icon: LayoutDashboard },
       { label: "Onboarding", to: "/app/distributor/onboarding", icon: ShieldCheck },
       { label: "Orders", to: "/app/distributor/orders", icon: ShoppingCart },
+      { label: "Reports", to: "/app/distributor/client-reports", icon: FileSpreadsheet },
       { label: "AUM", to: "/app/distributor/aum", icon: Briefcase },
       { label: "Commissions", to: "/app/distributor/commissions", icon: HandCoins },
     ],

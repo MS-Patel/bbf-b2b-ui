@@ -23,6 +23,7 @@ import { Route as AppRmOnboardingRouteImport } from './routes/app.rm.onboarding'
 import { Route as AppRmEarningsRouteImport } from './routes/app.rm.earnings'
 import { Route as AppRmDistributorsRouteImport } from './routes/app.rm.distributors'
 import { Route as AppRmClientsRouteImport } from './routes/app.rm.clients'
+import { Route as AppRmClientReportsRouteImport } from './routes/app.rm.client-reports'
 import { Route as AppInvestorTransactionsRouteImport } from './routes/app.investor.transactions'
 import { Route as AppInvestorTaxRouteImport } from './routes/app.investor.tax'
 import { Route as AppInvestorProfileRouteImport } from './routes/app.investor.profile'
@@ -30,16 +31,19 @@ import { Route as AppInvestorPortfolioRouteImport } from './routes/app.investor.
 import { Route as AppInvestorGoalsRouteImport } from './routes/app.investor.goals'
 import { Route as AppDistributorOnboardingRouteImport } from './routes/app.distributor.onboarding'
 import { Route as AppDistributorCommissionsRouteImport } from './routes/app.distributor.commissions'
+import { Route as AppDistributorClientReportsRouteImport } from './routes/app.distributor.client-reports'
 import { Route as AppDistributorAumRouteImport } from './routes/app.distributor.aum'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
 import { Route as AppAdminSystemConfigRouteImport } from './routes/app.admin.system-config'
 import { Route as AppAdminSystemRouteImport } from './routes/app.admin.system'
 import { Route as AppAdminRmsRouteImport } from './routes/app.admin.rms'
 import { Route as AppAdminReconciliationRouteImport } from './routes/app.admin.reconciliation'
+import { Route as AppAdminProductsUploadRouteImport } from './routes/app.admin.products-upload'
 import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
 import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mappings'
+import { Route as AppAdminIntegrationToolsRouteImport } from './routes/app.admin.integration-tools'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminDistributorCategoriesRouteImport } from './routes/app.admin.distributor-categories'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
@@ -129,6 +133,11 @@ const AppRmClientsRoute = AppRmClientsRouteImport.update({
   path: '/rm/clients',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRmClientReportsRoute = AppRmClientReportsRouteImport.update({
+  id: '/rm/client-reports',
+  path: '/rm/client-reports',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInvestorTransactionsRoute = AppInvestorTransactionsRouteImport.update({
   id: '/investor/transactions',
   path: '/investor/transactions',
@@ -166,6 +175,12 @@ const AppDistributorCommissionsRoute =
     path: '/distributor/commissions',
     getParentRoute: () => AppRoute,
   } as any)
+const AppDistributorClientReportsRoute =
+  AppDistributorClientReportsRouteImport.update({
+    id: '/distributor/client-reports',
+    path: '/distributor/client-reports',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppDistributorAumRoute = AppDistributorAumRouteImport.update({
   id: '/distributor/aum',
   path: '/distributor/aum',
@@ -196,6 +211,11 @@ const AppAdminReconciliationRoute = AppAdminReconciliationRouteImport.update({
   path: '/admin/reconciliation',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminProductsUploadRoute = AppAdminProductsUploadRouteImport.update({
+  id: '/admin/products-upload',
+  path: '/admin/products-upload',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminPayoutsRoute = AppAdminPayoutsRouteImport.update({
   id: '/admin/payouts',
   path: '/admin/payouts',
@@ -216,6 +236,12 @@ const AppAdminMappingsRoute = AppAdminMappingsRouteImport.update({
   path: '/admin/mappings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminIntegrationToolsRoute =
+  AppAdminIntegrationToolsRouteImport.update({
+    id: '/admin/integration-tools',
+    path: '/admin/integration-tools',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppAdminDistributorsRoute = AppAdminDistributorsRouteImport.update({
   id: '/admin/distributors',
   path: '/admin/distributors',
@@ -324,16 +350,19 @@ export interface FileRoutesByFullPath {
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
+  '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/products-upload': typeof AppAdminProductsUploadRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
+  '/app/distributor/client-reports': typeof AppDistributorClientReportsRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
   '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
@@ -341,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
+  '/app/rm/client-reports': typeof AppRmClientReportsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRouteWithChildren
   '/app/rm/earnings': typeof AppRmEarningsRoute
@@ -375,16 +405,19 @@ export interface FileRoutesByTo {
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
+  '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/products-upload': typeof AppAdminProductsUploadRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
+  '/app/distributor/client-reports': typeof AppDistributorClientReportsRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
   '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
@@ -392,6 +425,7 @@ export interface FileRoutesByTo {
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
+  '/app/rm/client-reports': typeof AppRmClientReportsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRouteWithChildren
   '/app/rm/earnings': typeof AppRmEarningsRoute
@@ -427,16 +461,19 @@ export interface FileRoutesById {
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
+  '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
   '/app/admin/payouts': typeof AppAdminPayoutsRoute
+  '/app/admin/products-upload': typeof AppAdminProductsUploadRoute
   '/app/admin/reconciliation': typeof AppAdminReconciliationRoute
   '/app/admin/rms': typeof AppAdminRmsRouteWithChildren
   '/app/admin/system': typeof AppAdminSystemRoute
   '/app/admin/system-config': typeof AppAdminSystemConfigRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/distributor/aum': typeof AppDistributorAumRoute
+  '/app/distributor/client-reports': typeof AppDistributorClientReportsRoute
   '/app/distributor/commissions': typeof AppDistributorCommissionsRoute
   '/app/distributor/onboarding': typeof AppDistributorOnboardingRouteWithChildren
   '/app/investor/goals': typeof AppInvestorGoalsRoute
@@ -444,6 +481,7 @@ export interface FileRoutesById {
   '/app/investor/profile': typeof AppInvestorProfileRoute
   '/app/investor/tax': typeof AppInvestorTaxRoute
   '/app/investor/transactions': typeof AppInvestorTransactionsRoute
+  '/app/rm/client-reports': typeof AppRmClientReportsRoute
   '/app/rm/clients': typeof AppRmClientsRoute
   '/app/rm/distributors': typeof AppRmDistributorsRouteWithChildren
   '/app/rm/earnings': typeof AppRmEarningsRoute
@@ -480,16 +518,19 @@ export interface FileRouteTypes {
     | '/app/admin/commissions'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
+    | '/app/admin/integration-tools'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
+    | '/app/admin/products-upload'
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
+    | '/app/distributor/client-reports'
     | '/app/distributor/commissions'
     | '/app/distributor/onboarding'
     | '/app/investor/goals'
@@ -497,6 +538,7 @@ export interface FileRouteTypes {
     | '/app/investor/profile'
     | '/app/investor/tax'
     | '/app/investor/transactions'
+    | '/app/rm/client-reports'
     | '/app/rm/clients'
     | '/app/rm/distributors'
     | '/app/rm/earnings'
@@ -531,16 +573,19 @@ export interface FileRouteTypes {
     | '/app/admin/commissions'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
+    | '/app/admin/integration-tools'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
+    | '/app/admin/products-upload'
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
+    | '/app/distributor/client-reports'
     | '/app/distributor/commissions'
     | '/app/distributor/onboarding'
     | '/app/investor/goals'
@@ -548,6 +593,7 @@ export interface FileRouteTypes {
     | '/app/investor/profile'
     | '/app/investor/tax'
     | '/app/investor/transactions'
+    | '/app/rm/client-reports'
     | '/app/rm/clients'
     | '/app/rm/distributors'
     | '/app/rm/earnings'
@@ -582,16 +628,19 @@ export interface FileRouteTypes {
     | '/app/admin/commissions'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
+    | '/app/admin/integration-tools'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
     | '/app/admin/payouts'
+    | '/app/admin/products-upload'
     | '/app/admin/reconciliation'
     | '/app/admin/rms'
     | '/app/admin/system'
     | '/app/admin/system-config'
     | '/app/admin/users'
     | '/app/distributor/aum'
+    | '/app/distributor/client-reports'
     | '/app/distributor/commissions'
     | '/app/distributor/onboarding'
     | '/app/investor/goals'
@@ -599,6 +648,7 @@ export interface FileRouteTypes {
     | '/app/investor/profile'
     | '/app/investor/tax'
     | '/app/investor/transactions'
+    | '/app/rm/client-reports'
     | '/app/rm/clients'
     | '/app/rm/distributors'
     | '/app/rm/earnings'
@@ -729,6 +779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRmClientsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/rm/client-reports': {
+      id: '/app/rm/client-reports'
+      path: '/rm/client-reports'
+      fullPath: '/app/rm/client-reports'
+      preLoaderRoute: typeof AppRmClientReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/investor/transactions': {
       id: '/app/investor/transactions'
       path: '/investor/transactions'
@@ -778,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDistributorCommissionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/distributor/client-reports': {
+      id: '/app/distributor/client-reports'
+      path: '/distributor/client-reports'
+      fullPath: '/app/distributor/client-reports'
+      preLoaderRoute: typeof AppDistributorClientReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/distributor/aum': {
       id: '/app/distributor/aum'
       path: '/distributor/aum'
@@ -820,6 +884,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminReconciliationRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/products-upload': {
+      id: '/app/admin/products-upload'
+      path: '/admin/products-upload'
+      fullPath: '/app/admin/products-upload'
+      preLoaderRoute: typeof AppAdminProductsUploadRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/payouts': {
       id: '/app/admin/payouts'
       path: '/admin/payouts'
@@ -846,6 +917,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/mappings'
       fullPath: '/app/admin/mappings'
       preLoaderRoute: typeof AppAdminMappingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/integration-tools': {
+      id: '/app/admin/integration-tools'
+      path: '/admin/integration-tools'
+      fullPath: '/app/admin/integration-tools'
+      preLoaderRoute: typeof AppAdminIntegrationToolsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/distributors': {
@@ -1067,16 +1145,19 @@ interface AppRouteChildren {
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
   AppAdminDistributorCategoriesRoute: typeof AppAdminDistributorCategoriesRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRouteWithChildren
+  AppAdminIntegrationToolsRoute: typeof AppAdminIntegrationToolsRoute
   AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRouteWithChildren
   AppAdminPayoutsRoute: typeof AppAdminPayoutsRoute
+  AppAdminProductsUploadRoute: typeof AppAdminProductsUploadRoute
   AppAdminReconciliationRoute: typeof AppAdminReconciliationRoute
   AppAdminRmsRoute: typeof AppAdminRmsRouteWithChildren
   AppAdminSystemRoute: typeof AppAdminSystemRoute
   AppAdminSystemConfigRoute: typeof AppAdminSystemConfigRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppDistributorAumRoute: typeof AppDistributorAumRoute
+  AppDistributorClientReportsRoute: typeof AppDistributorClientReportsRoute
   AppDistributorCommissionsRoute: typeof AppDistributorCommissionsRoute
   AppDistributorOnboardingRoute: typeof AppDistributorOnboardingRouteWithChildren
   AppInvestorGoalsRoute: typeof AppInvestorGoalsRoute
@@ -1084,6 +1165,7 @@ interface AppRouteChildren {
   AppInvestorProfileRoute: typeof AppInvestorProfileRoute
   AppInvestorTaxRoute: typeof AppInvestorTaxRoute
   AppInvestorTransactionsRoute: typeof AppInvestorTransactionsRoute
+  AppRmClientReportsRoute: typeof AppRmClientReportsRoute
   AppRmClientsRoute: typeof AppRmClientsRoute
   AppRmDistributorsRoute: typeof AppRmDistributorsRouteWithChildren
   AppRmEarningsRoute: typeof AppRmEarningsRoute
@@ -1108,16 +1190,19 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
   AppAdminDistributorCategoriesRoute: AppAdminDistributorCategoriesRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRouteWithChildren,
+  AppAdminIntegrationToolsRoute: AppAdminIntegrationToolsRoute,
   AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRouteWithChildren,
   AppAdminPayoutsRoute: AppAdminPayoutsRoute,
+  AppAdminProductsUploadRoute: AppAdminProductsUploadRoute,
   AppAdminReconciliationRoute: AppAdminReconciliationRoute,
   AppAdminRmsRoute: AppAdminRmsRouteWithChildren,
   AppAdminSystemRoute: AppAdminSystemRoute,
   AppAdminSystemConfigRoute: AppAdminSystemConfigRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppDistributorAumRoute: AppDistributorAumRoute,
+  AppDistributorClientReportsRoute: AppDistributorClientReportsRoute,
   AppDistributorCommissionsRoute: AppDistributorCommissionsRoute,
   AppDistributorOnboardingRoute: AppDistributorOnboardingRouteWithChildren,
   AppInvestorGoalsRoute: AppInvestorGoalsRoute,
@@ -1125,6 +1210,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInvestorProfileRoute: AppInvestorProfileRoute,
   AppInvestorTaxRoute: AppInvestorTaxRoute,
   AppInvestorTransactionsRoute: AppInvestorTransactionsRoute,
+  AppRmClientReportsRoute: AppRmClientReportsRoute,
   AppRmClientsRoute: AppRmClientsRoute,
   AppRmDistributorsRoute: AppRmDistributorsRouteWithChildren,
   AppRmEarningsRoute: AppRmEarningsRoute,
