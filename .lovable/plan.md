@@ -1,118 +1,79 @@
-## Payouts & Commissions Dashboard
+# Plan: Missing Admin/RM/Distributor pages
 
-Three new admin surfaces, all role-guarded to `admin`, wired with typed mocks following the existing `useQuery` + fixture pattern. No backend calls — pure typed mock hooks ready to swap to real APIs later.
+The user spec says `src/pages/...`, but this project uses **TanStack Router file-based routing** under `src/routes/`. I'll follow the existing project convention (the rest of the codebase, navigation, and route tree all live there). Each route file will export the required `Route` for TanStack and a `default` page component, matching the user's `export default function` constraint.
 
-### 1. Payouts Dashboard — upgrade `src/routes/app.admin.payouts.tsx`
+## 1. Admin — Products & NAV Operations
 
-Replace the current single-table page with a richer dashboard:
+**File:** `src/routes/app.admin.products-upload.tsx`
+**Path:** `/app/admin/products-upload`
 
-- **Page header** with eyebrow `Admin · Finance`, title "Payouts dashboard", actions: cycle selector, "Export CSV", "Re-run failed".
-- **KPI cards** (4): Total payouts (current cycle), Brokerage imported (current cycle), Pending payouts, Active distributor categories. Reuses the `Stat` card pattern from commissions page.
-- **Performance chart**: `AreaChart` (Recharts) showing total payout amount per cycle for the last 6 cycles, plus a secondary line for brokerage imported. Mirrors the commissions chart styling (gradient fill, `var(--color-primary)`).
-- **Distributor category breakdown**: small horizontal bar chart or `Card` grid showing payout split by distributor category (Platinum / Gold / Silver / Bronze) for the active cycle.
-- **Payout runs table**: keep the existing `DataTable` (cycle, beneficiary, amount, status, processed) below the dashboard, with the existing status filter.
+- Page header: "Products & NAV Operations".
+- Two side-by-side upload cards (reusing the same visual pattern as `app.admin.master-data.tsx`):
+  - **SchemeUploadForm** — CSV file picker + "Download scheme template" + AMC selector + "Upload schemes" button.
+  - **NAVUploadForm** — CSV file picker + effective-date picker + "Download NAV template" + "Upload NAVs" button.
+- Both forms validated with `zod` + `react-hook-form`; on submit show toast (mock backend wiring, ready to swap in real endpoints later).
+- Tabs below the uploads:
+  - **AMCs preview** — DataTable of `AMC_MASTER_FIXTURE` (code, name, registrar, active schemes, last NAV, status).
+  - **Schemes preview** — DataTable derived from a small new fixture (scheme code, name, AMC, category, plan, NAV, NAV date).
+- Add a tiny `SCHEMES_PREVIEW_FIXTURE` to `src/features/admin/fixtures.ts` and a `useSchemesPreviewQuery` hook in `src/features/admin/api.ts` to keep the data layer consistent with how every other admin page loads.
 
-### 2. Brokerage Imports — `src/routes/app.admin.brokerage-imports.tsx` (new)
+## 2. Admin — Integration Tools & Diagnostics
 
-Standalone page mirroring the Master Data uploads pattern.
+**File:** `src/routes/app.admin.integration-tools.tsx`
+**Path:** `/app/admin/integration-tools`
 
-- **Page header** with action "Upload brokerage file" (toast-only stub, since this is mock-wired).
-- **DataTable** columns: Import Date, File Name, Source (BSE / NSE / CAMS / Karvy), Records, Errors, Status (`processed` / `processing` / `failed`), Actions.
-- **Row actions** (dropdown): Reprocess (toast), Export Report (toast), View errors (toast). Failed rows surface the reprocess action prominently.
-- Status filter + source filter at the top.
+- Page header: "Integration tools & diagnostics".
+- Two diagnostic cards in a responsive grid:
+  - **BSE PAN Check** — PAN input (zod regex `^[A-Z]{5}[0-9]{4}[A-Z]$`), "Run check" button. On submit, mocked result with green `CheckCircle2` (verified) or red `XCircle` (failed) plus details panel (name on PAN, KYC status, last verified date).
+  - **NDML KYC / CKYC Status** — PAN input + KYC type select (KRA / CKYC), result panel with status indicator and registrar metadata.
+- Recent diagnostics history table — last 10 lookups (PAN masked, tool used, result tone badge, run by, when). Backed by a new `INTEGRATION_TOOLS_HISTORY_FIXTURE` and `useIntegrationToolsHistoryQuery`.
+- Status indicators reuse `StatusBadge` (`success` / `destructive` / `warning`).
 
-### 3. Distributor Categories — `src/routes/app.admin.distributor-categories.tsx` (new)
+## 3. RM — Client Comprehensive Reports
 
-Settings-style configuration page.
+**File:** `src/routes/app.rm.client-reports.tsx`
+**Path:** `/app/rm/client-reports`
 
-- **Page header** with action "New category".
-- **Card grid** of categories (Platinum / Gold / Silver / Bronze) showing: name, AUM threshold, base trail %, bonus trail %, distributor count, status badge.
-- **Slabs table** below: tier name, min AUM, max AUM, trail rate %, bonus %, effective from, status, edit action.
-- Edit/create handled via a `Sheet` with form fields (Zod-validated; mutation is a no-op toast for now to keep this scope tight).
+- Page header: "Client comprehensive reports".
+- Filter card (sticky-feeling, same density as other RM pages):
+  - Client picker (Combobox-style `Select` populated from `useRmClientsQuery`).
+  - Report type select: Wealth Report / P&L / Capital Gains / Transaction Statement / Holding Statement.
+  - Date range — two date inputs (from / to), default last FY.
+  - Format select: PDF / Excel / CSV.
+  - "Generate report" (primary) and "Email to client" (secondary) buttons. Submit triggers a stubbed download: builds a small CSV/Blob in-browser so the button does something tangible, then toast confirms which backend endpoint would be called (e.g. `ExportWealthReportView`).
+- Recent exports table — last 10 generated reports for this RM (client, type, period, format, status, downloaded at). Backed by a new `CLIENT_REPORTS_FIXTURE` + `useClientReportsHistoryQuery` (shared with Distributor page).
 
-### Data layer
+## 4. Distributor — Client Comprehensive Reports
 
-Add to `src/types/admin.ts`:
+**File:** `src/routes/app.distributor.client-reports.tsx`
+**Path:** `/app/distributor/client-reports`
 
-```ts
-export type BrokerageImportStatus = "processed" | "processing" | "failed";
-export type BrokerageSource = "BSE" | "NSE" | "CAMS" | "Karvy";
+- Same component structure as the RM page, but:
+  - Client list comes from the distributor's investors fixture.
+  - Role guard checks `distributor`.
+  - Page header eyebrow says "Distributor · Reports".
+- Both pages share a single `ClientReportsForm` component placed at `src/features/reports/components/client-reports-form.tsx` (parameterised by `clients` + `ownerLabel`) so we don't duplicate logic.
+- Shared types/fixtures live in `src/features/reports/` (`api.ts`, `fixtures.ts`, `types.ts`).
 
-export interface BrokerageImport {
-  id: string;
-  fileName: string;
-  source: BrokerageSource;
-  uploadedBy: string;
-  importedAt: string;
-  records: number;
-  errors: number;
-  amount: number;            // total brokerage in file
-  status: BrokerageImportStatus;
-}
+## Navigation updates
 
-export type DistributorCategoryStatus = "active" | "inactive";
+Edit `src/config/navigation.ts`:
 
-export interface DistributorCategory {
-  id: string;
-  name: "Platinum" | "Gold" | "Silver" | "Bronze";
-  minAum: number;
-  maxAum: number | null;
-  baseTrailPct: number;
-  bonusTrailPct: number;
-  distributorCount: number;
-  effectiveFrom: string;
-  status: DistributorCategoryStatus;
-  updatedAt: string;
-}
+- Admin → "Operations" section: add `Products & NAV` (icon: `Layers` or `FileSpreadsheet`).
+- Admin → "System" section: add `Integration Tools` (icon: `Activity`).
+- RM → "Clients" section: add `Reports` after `Orders` (icon: `FileSpreadsheet`).
+- Distributor → "Business" section: add `Reports` after `Orders` (icon: `FileSpreadsheet`).
 
-export interface PayoutCycleSummary {
-  cycle: string;             // "Apr 2026"
-  totalPayouts: number;
-  brokerageImported: number;
-  byCategory: Array<{ category: DistributorCategory["name"]; amount: number }>;
-}
-```
+## Technical notes
 
-Add to `src/features/admin/fixtures.ts`: `BROKERAGE_IMPORTS_FIXTURE`, `DISTRIBUTOR_CATEGORIES_FIXTURE`, `PAYOUT_CYCLE_SUMMARIES_FIXTURE` (6 cycles, deterministic seeded data).
+- Each route uses `createFileRoute(...)` with `beforeLoad` role guard (admin / rm / distributor) plus `head()` meta — same pattern as `app.admin.master-data.tsx` / `app.rm.clients.tsx`.
+- Page components are `export default function` per the user's constraint; `Route` is also exported as required by TanStack.
+- All forms use `react-hook-form` + `zod` (already used across the project) with proper input validation (PAN regex, date range sanity, file type).
+- All tables use `DataTable` from `src/components/data/data-table.tsx`.
+- `routeTree.gen.ts` is auto-generated and will pick up the new files.
+- No backend wiring yet — submit handlers are mocked (toast + optional client-side Blob download) so the UI is fully usable and ready to wire to the real DRF endpoints (`ExportWealthReportView`, `BSEPanCheckToolView`, `CheckPANStatusView`, etc.) by swapping the handler bodies.
 
-Add to `src/features/admin/api.ts`:
+## Out of scope (call out)
 
-```ts
-useBrokerageImportsQuery()         // BrokerageImport[]
-useDistributorCategoriesQuery()    // DistributorCategory[]
-usePayoutCycleSummariesQuery()     // PayoutCycleSummary[]
-```
-
-All follow the existing `delay(...)` + `useQuery` pattern, 60s `staleTime`.
-
-### Navigation
-
-Update `src/config/navigation.ts` Finance section for admin:
-
-```text
-Finance
-  Commissions
-  Payouts                       (existing)
-  Brokerage Imports             (new, FileSpreadsheet icon)
-  Distributor Categories        (new, Layers icon)
-```
-
-### Files
-
-**Created**
-- `src/routes/app.admin.brokerage-imports.tsx`
-- `src/routes/app.admin.distributor-categories.tsx`
-
-**Edited**
-- `src/routes/app.admin.payouts.tsx` (dashboard upgrade)
-- `src/types/admin.ts`
-- `src/features/admin/fixtures.ts`
-- `src/features/admin/api.ts`
-- `src/config/navigation.ts`
-- `src/routeTree.gen.ts` (auto-regenerated by Vite plugin)
-
-### Out of scope
-
-- Real backend wiring (mocks only, ready to swap).
-- Persisting category edits (form submits show success toast).
-- File upload handling for brokerage imports (button shows toast).
+- Real backend integration (BSE / NDML / report exports) — UI is wired to mock handlers, ready to swap to `apiClient` calls.
+- Persisting uploaded files anywhere — uploads are simulated.
