@@ -13,6 +13,7 @@ import {
   Layers,
   Settings,
   ShoppingCart,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import type { UserRole } from "@/types/auth";
