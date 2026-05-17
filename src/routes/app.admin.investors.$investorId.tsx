@@ -103,15 +103,14 @@ function InvestorDetailPage() {
   return (
     <>
       <PageHeader
-        eyebrow={
-          <Link to="/app/admin/investors" className="inline-flex items-center gap-1.5 hover:text-foreground">
-            <ArrowLeft className="h-3.5 w-3.5" /> Admin · Investors
-          </Link>
-        }
+        eyebrow="Admin · Investors"
         title={investor.fullName}
         description={`PAN ${investor.pan} · Folio ${investor.folioNo}`}
         actions={
           <>
+            <Button asChild variant="ghost" size="sm" className="gap-1.5">
+              <Link to="/app/admin/investors"><ArrowLeft className="h-4 w-4" /> Back</Link>
+            </Button>
             <Button variant="outline" className="gap-2"><Download className="h-4 w-4" /> Statement</Button>
             <Button variant="outline" className="gap-2"><Edit className="h-4 w-4" /> Edit</Button>
           </>
