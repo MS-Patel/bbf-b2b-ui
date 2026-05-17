@@ -43,6 +43,7 @@ import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
 import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mappings'
+import { Route as AppAdminInvestorsRouteImport } from './routes/app.admin.investors'
 import { Route as AppAdminIntegrationToolsRouteImport } from './routes/app.admin.integration-tools'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminDistributorCategoriesRouteImport } from './routes/app.admin.distributor-categories'
@@ -62,6 +63,7 @@ import { Route as AppDistributorOnboardingNewRouteImport } from './routes/app.di
 import { Route as AppAdminRmsNewRouteImport } from './routes/app.admin.rms.new'
 import { Route as AppAdminOrdersNewRouteImport } from './routes/app.admin.orders.new'
 import { Route as AppAdminOnboardingNewRouteImport } from './routes/app.admin.onboarding.new'
+import { Route as AppAdminInvestorsInvestorIdRouteImport } from './routes/app.admin.investors.$investorId'
 import { Route as AppAdminDistributorsNewRouteImport } from './routes/app.admin.distributors.new'
 
 const LoginRoute = LoginRouteImport.update({
@@ -237,6 +239,11 @@ const AppAdminMappingsRoute = AppAdminMappingsRouteImport.update({
   path: '/admin/mappings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminInvestorsRoute = AppAdminInvestorsRouteImport.update({
+  id: '/admin/investors',
+  path: '/admin/investors',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIntegrationToolsRoute =
   AppAdminIntegrationToolsRouteImport.update({
     id: '/admin/integration-tools',
@@ -338,6 +345,12 @@ const AppAdminOnboardingNewRoute = AppAdminOnboardingNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppAdminOnboardingRoute,
 } as any)
+const AppAdminInvestorsInvestorIdRoute =
+  AppAdminInvestorsInvestorIdRouteImport.update({
+    id: '/$investorId',
+    path: '/$investorId',
+    getParentRoute: () => AppAdminInvestorsRoute,
+  } as any)
 const AppAdminDistributorsNewRoute = AppAdminDistributorsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -358,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRouteWithChildren
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -387,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
+  '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -414,6 +429,7 @@ export interface FileRoutesByTo {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRouteWithChildren
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -443,6 +459,7 @@ export interface FileRoutesByTo {
   '/app/investor': typeof AppInvestorIndexRoute
   '/app/rm': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
+  '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -471,6 +488,7 @@ export interface FileRoutesById {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRouteWithChildren
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -500,6 +518,7 @@ export interface FileRoutesById {
   '/app/investor/': typeof AppInvestorIndexRoute
   '/app/rm/': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
+  '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -529,6 +548,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -558,6 +578,7 @@ export interface FileRouteTypes {
     | '/app/investor/'
     | '/app/rm/'
     | '/app/admin/distributors/new'
+    | '/app/admin/investors/$investorId'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -585,6 +606,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -614,6 +636,7 @@ export interface FileRouteTypes {
     | '/app/investor'
     | '/app/rm'
     | '/app/admin/distributors/new'
+    | '/app/admin/investors/$investorId'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -641,6 +664,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -670,6 +694,7 @@ export interface FileRouteTypes {
     | '/app/investor/'
     | '/app/rm/'
     | '/app/admin/distributors/new'
+    | '/app/admin/investors/$investorId'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -931,6 +956,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMappingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/investors': {
+      id: '/app/admin/investors'
+      path: '/admin/investors'
+      fullPath: '/app/admin/investors'
+      preLoaderRoute: typeof AppAdminInvestorsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/integration-tools': {
       id: '/app/admin/integration-tools'
       path: '/admin/integration-tools'
@@ -1064,6 +1096,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminOnboardingNewRouteImport
       parentRoute: typeof AppAdminOnboardingRoute
     }
+    '/app/admin/investors/$investorId': {
+      id: '/app/admin/investors/$investorId'
+      path: '/$investorId'
+      fullPath: '/app/admin/investors/$investorId'
+      preLoaderRoute: typeof AppAdminInvestorsInvestorIdRouteImport
+      parentRoute: typeof AppAdminInvestorsRoute
+    }
     '/app/admin/distributors/new': {
       id: '/app/admin/distributors/new'
       path: '/new'
@@ -1084,6 +1123,17 @@ const AppAdminDistributorsRouteChildren: AppAdminDistributorsRouteChildren = {
 
 const AppAdminDistributorsRouteWithChildren =
   AppAdminDistributorsRoute._addFileChildren(AppAdminDistributorsRouteChildren)
+
+interface AppAdminInvestorsRouteChildren {
+  AppAdminInvestorsInvestorIdRoute: typeof AppAdminInvestorsInvestorIdRoute
+}
+
+const AppAdminInvestorsRouteChildren: AppAdminInvestorsRouteChildren = {
+  AppAdminInvestorsInvestorIdRoute: AppAdminInvestorsInvestorIdRoute,
+}
+
+const AppAdminInvestorsRouteWithChildren =
+  AppAdminInvestorsRoute._addFileChildren(AppAdminInvestorsRouteChildren)
 
 interface AppAdminOnboardingRouteChildren {
   AppAdminOnboardingNewRoute: typeof AppAdminOnboardingNewRoute
@@ -1166,6 +1216,7 @@ interface AppRouteChildren {
   AppAdminDistributorCategoriesRoute: typeof AppAdminDistributorCategoriesRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRouteWithChildren
   AppAdminIntegrationToolsRoute: typeof AppAdminIntegrationToolsRoute
+  AppAdminInvestorsRoute: typeof AppAdminInvestorsRouteWithChildren
   AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRouteWithChildren
@@ -1212,6 +1263,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminDistributorCategoriesRoute: AppAdminDistributorCategoriesRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRouteWithChildren,
   AppAdminIntegrationToolsRoute: AppAdminIntegrationToolsRoute,
+  AppAdminInvestorsRoute: AppAdminInvestorsRouteWithChildren,
   AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRouteWithChildren,
@@ -1259,12 +1311,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
