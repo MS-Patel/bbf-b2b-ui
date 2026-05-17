@@ -43,6 +43,7 @@ import { Route as AppAdminPayoutsRouteImport } from './routes/app.admin.payouts'
 import { Route as AppAdminOnboardingRouteImport } from './routes/app.admin.onboarding'
 import { Route as AppAdminMasterDataRouteImport } from './routes/app.admin.master-data'
 import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mappings'
+import { Route as AppAdminInvestorsRouteImport } from './routes/app.admin.investors'
 import { Route as AppAdminIntegrationToolsRouteImport } from './routes/app.admin.integration-tools'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminDistributorCategoriesRouteImport } from './routes/app.admin.distributor-categories'
@@ -237,6 +238,11 @@ const AppAdminMappingsRoute = AppAdminMappingsRouteImport.update({
   path: '/admin/mappings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminInvestorsRoute = AppAdminInvestorsRouteImport.update({
+  id: '/admin/investors',
+  path: '/admin/investors',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIntegrationToolsRoute =
   AppAdminIntegrationToolsRouteImport.update({
     id: '/admin/integration-tools',
@@ -358,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -414,6 +421,7 @@ export interface FileRoutesByTo {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -471,6 +479,7 @@ export interface FileRoutesById {
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
   '/app/admin/mappings': typeof AppAdminMappingsRoute
   '/app/admin/master-data': typeof AppAdminMasterDataRoute
   '/app/admin/onboarding': typeof AppAdminOnboardingRouteWithChildren
@@ -529,6 +538,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -585,6 +595,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -641,6 +652,7 @@ export interface FileRouteTypes {
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
+    | '/app/admin/investors'
     | '/app/admin/mappings'
     | '/app/admin/master-data'
     | '/app/admin/onboarding'
@@ -931,6 +943,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMappingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/investors': {
+      id: '/app/admin/investors'
+      path: '/admin/investors'
+      fullPath: '/app/admin/investors'
+      preLoaderRoute: typeof AppAdminInvestorsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/integration-tools': {
       id: '/app/admin/integration-tools'
       path: '/admin/integration-tools'
@@ -1166,6 +1185,7 @@ interface AppRouteChildren {
   AppAdminDistributorCategoriesRoute: typeof AppAdminDistributorCategoriesRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRouteWithChildren
   AppAdminIntegrationToolsRoute: typeof AppAdminIntegrationToolsRoute
+  AppAdminInvestorsRoute: typeof AppAdminInvestorsRoute
   AppAdminMappingsRoute: typeof AppAdminMappingsRoute
   AppAdminMasterDataRoute: typeof AppAdminMasterDataRoute
   AppAdminOnboardingRoute: typeof AppAdminOnboardingRouteWithChildren
@@ -1212,6 +1232,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminDistributorCategoriesRoute: AppAdminDistributorCategoriesRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRouteWithChildren,
   AppAdminIntegrationToolsRoute: AppAdminIntegrationToolsRoute,
+  AppAdminInvestorsRoute: AppAdminInvestorsRoute,
   AppAdminMappingsRoute: AppAdminMappingsRoute,
   AppAdminMasterDataRoute: AppAdminMasterDataRoute,
   AppAdminOnboardingRoute: AppAdminOnboardingRouteWithChildren,
