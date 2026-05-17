@@ -37,6 +37,7 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Overview", to: "/app/admin", icon: LayoutDashboard },
       { label: "Users & Roles", to: "/app/admin/users", icon: Users },
+      { label: "Investors", to: "/app/admin/investors", icon: Users },
       { label: "Distributors", to: "/app/admin/distributors", icon: Briefcase },
       { label: "RMs", to: "/app/admin/rms", icon: Users },
       { label: "Mappings", to: "/app/admin/mappings", icon: Activity },
