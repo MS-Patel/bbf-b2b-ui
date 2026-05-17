@@ -1,79 +1,90 @@
-# Plan: Missing Admin/RM/Distributor pages
 
-The user spec says `src/pages/...`, but this project uses **TanStack Router file-based routing** under `src/routes/`. I'll follow the existing project convention (the rest of the codebase, navigation, and route tree all live there). Each route file will export the required `Route` for TanStack and a `default` page component, matching the user's `export default function` constraint.
+# Plan — Admin UI Component Library (Phase 1)
 
-## 1. Admin — Products & NAV Operations
+## Approach
+Components-first, extending the existing admin scaffolding. Build a single reusable library under `src/components/admin/`, document each component on a new **Components Showcase** route, then progressively adopt them across existing pages in later phases. Existing `DataTable`, `StatusBadge`, `PageHeader`, and `ComingSoonCard` are kept and re-exported through the library to avoid duplication.
 
-**File:** `src/routes/app.admin.products-upload.tsx`
-**Path:** `/app/admin/products-upload`
+## Phase 1 deliverables (this iteration)
 
-- Page header: "Products & NAV Operations".
-- Two side-by-side upload cards (reusing the same visual pattern as `app.admin.master-data.tsx`):
-  - **SchemeUploadForm** — CSV file picker + "Download scheme template" + AMC selector + "Upload schemes" button.
-  - **NAVUploadForm** — CSV file picker + effective-date picker + "Download NAV template" + "Upload NAVs" button.
-- Both forms validated with `zod` + `react-hook-form`; on submit show toast (mock backend wiring, ready to swap in real endpoints later).
-- Tabs below the uploads:
-  - **AMCs preview** — DataTable of `AMC_MASTER_FIXTURE` (code, name, registrar, active schemes, last NAV, status).
-  - **Schemes preview** — DataTable derived from a small new fixture (scheme code, name, AMC, category, plan, NAV, NAV date).
-- Add a tiny `SCHEMES_PREVIEW_FIXTURE` to `src/features/admin/fixtures.ts` and a `useSchemesPreviewQuery` hook in `src/features/admin/api.ts` to keep the data layer consistent with how every other admin page loads.
+### New reusable components — `src/components/admin/`
+Each component is presentational, backend-agnostic, accepts typed props, and exports cleanly from `src/components/admin/index.ts`.
 
-## 2. Admin — Integration Tools & Diagnostics
+| Component | File | Notes |
+|---|---|---|
+| `KPIWidget` | `kpi-widget.tsx` | Title, value, delta, icon, trend sparkline slot |
+| `FilterToolbar` | `filter-toolbar.tsx` | Composable container: slots for search, selects, date range, reset, export |
+| `SearchBar` | `search-bar.tsx` | Debounced controlled input with icon + clear |
+| `StepForm` | `step-form.tsx` | Headless stepper: steps[], currentStep, validation states (`complete \| current \| error \| pending`), Next/Back/Save Draft buttons; renders `children(step)` |
+| `Timeline` | `timeline.tsx` | Vertical timeline with status dot (success/warn/error/info/muted), title, meta, body slot |
+| `AuditTrail` | `audit-trail.tsx` | Specialized Timeline: actor, action, before/after diff |
+| `RelationshipCard` | `relationship-card.tsx` | Avatar + name + role + relation badge + meta rows + actions |
+| `InfoDrawer` | `info-drawer.tsx` | Right-side Sheet wrapper with header, sections, footer actions |
+| `ConfirmationDialog` | `confirmation-dialog.tsx` | Title, description, destructive variant, async confirm |
+| `UploadZone` | `upload-zone.tsx` | Drag-drop area with file list, progress, accept/maxSize props (no real upload) |
+| `EmptyState` | `empty-state.tsx` | Icon + title + description + primary/secondary action |
+| `ErrorState` | `error-state.tsx` | Same shape as EmptyState with destructive tone + retry |
+| `BulkActionBar` | `bulk-action-bar.tsx` | Sticky bar appearing when N rows selected, action slots |
+| `TabbedDetailLayout` | `tabbed-detail-layout.tsx` | Header + tabs + content frame used by Investor/Scheme/Execution detail pages |
 
-**File:** `src/routes/app.admin.integration-tools.tsx`
-**Path:** `/app/admin/integration-tools`
+### Re-exports (kept where they are)
+- `DataTable` (already at `src/components/data/data-table.tsx`) — add row-selection + bulkActions props as optional extension.
+- `StatusBadge` (already at `src/components/feedback/status-badge.tsx`).
+- `PageHeader` (already at `src/components/layout/page-header.tsx`).
+- `ComingSoonCard`.
 
-- Page header: "Integration tools & diagnostics".
-- Two diagnostic cards in a responsive grid:
-  - **BSE PAN Check** — PAN input (zod regex `^[A-Z]{5}[0-9]{4}[A-Z]$`), "Run check" button. On submit, mocked result with green `CheckCircle2` (verified) or red `XCircle` (failed) plus details panel (name on PAN, KYC status, last verified date).
-  - **NDML KYC / CKYC Status** — PAN input + KYC type select (KRA / CKYC), result panel with status indicator and registrar metadata.
-- Recent diagnostics history table — last 10 lookups (PAN masked, tool used, result tone badge, run by, when). Backed by a new `INTEGRATION_TOOLS_HISTORY_FIXTURE` and `useIntegrationToolsHistoryQuery`.
-- Status indicators reuse `StatusBadge` (`success` / `destructive` / `warning`).
+### DataTable optional extensions (backward-compatible)
+- `selectable?: boolean`, `onSelectionChange?: (ids: string[]) => void`
+- `rowActions?: (row) => ReactNode` rendered in a trailing actions cell
+- `stickyHeader?: boolean`
+- No API breakage for existing callers.
 
-## 3. RM — Client Comprehensive Reports
+### Showcase route
+- File: `src/routes/app.admin.components.tsx` → `/app/admin/components`
+- Section per component with: short description, props summary, live example using mock fixtures from `src/components/admin/_fixtures.ts`.
+- Sidebar nav entry under **System → Components Library**.
 
-**File:** `src/routes/app.rm.client-reports.tsx`
-**Path:** `/app/rm/client-reports`
-
-- Page header: "Client comprehensive reports".
-- Filter card (sticky-feeling, same density as other RM pages):
-  - Client picker (Combobox-style `Select` populated from `useRmClientsQuery`).
-  - Report type select: Wealth Report / P&L / Capital Gains / Transaction Statement / Holding Statement.
-  - Date range — two date inputs (from / to), default last FY.
-  - Format select: PDF / Excel / CSV.
-  - "Generate report" (primary) and "Email to client" (secondary) buttons. Submit triggers a stubbed download: builds a small CSV/Blob in-browser so the button does something tangible, then toast confirms which backend endpoint would be called (e.g. `ExportWealthReportView`).
-- Recent exports table — last 10 generated reports for this RM (client, type, period, format, status, downloaded at). Backed by a new `CLIENT_REPORTS_FIXTURE` + `useClientReportsHistoryQuery` (shared with Distributor page).
-
-## 4. Distributor — Client Comprehensive Reports
-
-**File:** `src/routes/app.distributor.client-reports.tsx`
-**Path:** `/app/distributor/client-reports`
-
-- Same component structure as the RM page, but:
-  - Client list comes from the distributor's investors fixture.
-  - Role guard checks `distributor`.
-  - Page header eyebrow says "Distributor · Reports".
-- Both pages share a single `ClientReportsForm` component placed at `src/features/reports/components/client-reports-form.tsx` (parameterised by `clients` + `ownerLabel`) so we don't duplicate logic.
-- Shared types/fixtures live in `src/features/reports/` (`api.ts`, `fixtures.ts`, `types.ts`).
-
-## Navigation updates
-
-Edit `src/config/navigation.ts`:
-
-- Admin → "Operations" section: add `Products & NAV` (icon: `Layers` or `FileSpreadsheet`).
-- Admin → "System" section: add `Integration Tools` (icon: `Activity`).
-- RM → "Clients" section: add `Reports` after `Orders` (icon: `FileSpreadsheet`).
-- Distributor → "Business" section: add `Reports` after `Orders` (icon: `FileSpreadsheet`).
+## Out of scope (deferred to later phases)
+- New pages: Franchise, Family Groups, Investor Detail tabs, Execution Detail, Scheme Detail, Document Mgmt.
+- Wiring components into existing pages (Investor Onboarding → StepForm, Orders → BulkActionBar, etc.).
+- Real selection/filter state in existing tables.
+- Any backend / API work.
 
 ## Technical notes
+- All components: `export function` named exports, no default exports, no router imports.
+- Use existing shadcn primitives (Sheet, Dialog, Tabs, Progress, Avatar, Badge).
+- Tailwind v4 semantic tokens only (`bg-card`, `text-muted-foreground`, etc.) — no raw hex.
+- Mock data lives in a single `_fixtures.ts` next to the components for the showcase only.
+- Showcase route uses standard `createFileRoute` with `beforeLoad` admin guard mirroring other admin routes; the components themselves remain router-agnostic.
 
-- Each route uses `createFileRoute(...)` with `beforeLoad` role guard (admin / rm / distributor) plus `head()` meta — same pattern as `app.admin.master-data.tsx` / `app.rm.clients.tsx`.
-- Page components are `export default function` per the user's constraint; `Route` is also exported as required by TanStack.
-- All forms use `react-hook-form` + `zod` (already used across the project) with proper input validation (PAN regex, date range sanity, file type).
-- All tables use `DataTable` from `src/components/data/data-table.tsx`.
-- `routeTree.gen.ts` is auto-generated and will pick up the new files.
-- No backend wiring yet — submit handlers are mocked (toast + optional client-side Blob download) so the UI is fully usable and ready to wire to the real DRF endpoints (`ExportWealthReportView`, `BSEPanCheckToolView`, `CheckPANStatusView`, etc.) by swapping the handler bodies.
+## File list
 
-## Out of scope (call out)
+**Created**
+- `src/components/admin/index.ts`
+- `src/components/admin/kpi-widget.tsx`
+- `src/components/admin/filter-toolbar.tsx`
+- `src/components/admin/search-bar.tsx`
+- `src/components/admin/step-form.tsx`
+- `src/components/admin/timeline.tsx`
+- `src/components/admin/audit-trail.tsx`
+- `src/components/admin/relationship-card.tsx`
+- `src/components/admin/info-drawer.tsx`
+- `src/components/admin/confirmation-dialog.tsx`
+- `src/components/admin/upload-zone.tsx`
+- `src/components/admin/empty-state.tsx`
+- `src/components/admin/error-state.tsx`
+- `src/components/admin/bulk-action-bar.tsx`
+- `src/components/admin/tabbed-detail-layout.tsx`
+- `src/components/admin/_fixtures.ts`
+- `src/routes/app.admin.components.tsx`
 
-- Real backend integration (BSE / NDML / report exports) — UI is wired to mock handlers, ready to swap to `apiClient` calls.
-- Persisting uploaded files anywhere — uploads are simulated.
+**Edited**
+- `src/components/data/data-table.tsx` (add optional `selectable`, `rowActions`, `stickyHeader` props)
+- `src/config/navigation.ts` (add "Components Library" entry)
+
+## Next phases (for your approval after this one ships)
+1. **Investor module**: Investor List polish + Investor Detail tabbed page (Overview, KYC/FATCA, Bank, Nominees, Documents, Relationships, Risk, Transactions, SIP, Family, Audit).
+2. **Onboarding**: rebuild current onboarding using `StepForm` with 8 steps + draft save.
+3. **Transaction lifecycle**: Execution Detail page with `Timeline` + payload/response panels; visually separate Order Intent vs Execution Lifecycle.
+4. **Organization**: Franchise pages + hierarchy display.
+5. **Reconciliation**: Match Review + Exception Queue with `InfoDrawer`.
+6. **Documents & Family Group** modules.

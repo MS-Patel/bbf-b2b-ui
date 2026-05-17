@@ -1,6 +1,7 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -30,6 +31,11 @@ interface DataTableProps<T extends { id: string }> {
   mobileCard?: (row: T) => ReactNode;
   emptyState?: ReactNode;
   className?: string;
+  selectable?: boolean;
+  selectedIds?: string[];
+  onSelectionChange?: (ids: string[]) => void;
+  rowActions?: (row: T) => ReactNode;
+  stickyHeader?: boolean;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -41,10 +47,22 @@ export function DataTable<T extends { id: string }>({
   mobileCard,
   emptyState,
   className,
+  selectable,
+  selectedIds,
+  onSelectionChange,
+  rowActions,
+  stickyHeader,
 }: DataTableProps<T>) {
   const [page, setPage] = useState(0);
   const [sortId, setSortId] = useState<string | undefined>(initialSortId);
   const [sortDir, setSortDir] = useState<"asc" | "desc">(initialSortDir);
+  const [internalSelected, setInternalSelected] = useState<string[]>([]);
+  const selection = selectedIds ?? internalSelected;
+
+  const setSelection = (ids: string[]) => {
+    if (selectedIds === undefined) setInternalSelected(ids);
+    onSelectionChange?.(ids);
+  };
 
   const sorted = useMemo(() => {
     if (!sortId) return data;
@@ -66,6 +84,15 @@ export function DataTable<T extends { id: string }>({
   const safePage = Math.min(page, totalPages - 1);
   const slice = sorted.slice(safePage * pageSize, safePage * pageSize + pageSize);
 
+  // Reset selection when filtered/data changes drastically
+  useEffect(() => {
+    if (selection.length === 0) return;
+    const valid = new Set(data.map((d) => d.id));
+    const filtered = selection.filter((id) => valid.has(id));
+    if (filtered.length !== selection.length) setSelection(filtered);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   function toggleSort(id: string) {
     if (sortId === id) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -76,6 +103,20 @@ export function DataTable<T extends { id: string }>({
     setPage(0);
   }
 
+  function toggleRow(id: string) {
+    setSelection(selection.includes(id) ? selection.filter((x) => x !== id) : [...selection, id]);
+  }
+
+  function togglePageAll() {
+    const pageIds = slice.map((r) => r.id);
+    const allOn = pageIds.every((id) => selection.includes(id));
+    if (allOn) {
+      setSelection(selection.filter((id) => !pageIds.includes(id)));
+    } else {
+      setSelection(Array.from(new Set([...selection, ...pageIds])));
+    }
+  }
+
   if (data.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border bg-card/40 p-10 text-center">
@@ -84,13 +125,26 @@ export function DataTable<T extends { id: string }>({
     );
   }
 
+  const pageIds = slice.map((r) => r.id);
+  const pageAllOn = pageIds.length > 0 && pageIds.every((id) => selection.includes(id));
+  const pageSomeOn = pageIds.some((id) => selection.includes(id));
+
   return (
     <div className={cn("space-y-3", className)}>
       {/* Desktop table */}
       <div className="hidden overflow-hidden rounded-xl border border-border bg-card md:block">
         <Table>
-          <TableHeader>
+          <TableHeader className={cn(stickyHeader && "sticky top-0 z-10 bg-card")}>
             <TableRow className="bg-secondary/40 hover:bg-secondary/40">
+              {selectable && (
+                <TableHead className="w-10">
+                  <Checkbox
+                    aria-label="Select page"
+                    checked={pageAllOn ? true : pageSomeOn ? "indeterminate" : false}
+                    onCheckedChange={togglePageAll}
+                  />
+                </TableHead>
+              )}
               {columns.map((col) => {
                 const sortable = !!col.sortValue;
                 const active = sortId === col.id;
@@ -131,26 +185,46 @@ export function DataTable<T extends { id: string }>({
                   </TableHead>
                 );
               })}
+              {rowActions && <TableHead className="w-10" />}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {slice.map((row) => (
-              <TableRow key={row.id} className="border-border/60">
-                {columns.map((col) => (
-                  <TableCell
-                    key={col.id}
-                    className={cn(
-                      "py-3 text-sm",
-                      col.align === "right" && "text-right tabular-nums",
-                      col.align === "center" && "text-center",
-                      col.className,
-                    )}
-                  >
-                    {col.accessor(row)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+            {slice.map((row) => {
+              const checked = selection.includes(row.id);
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={checked ? "selected" : undefined}
+                  className="border-border/60"
+                >
+                  {selectable && (
+                    <TableCell className="w-10">
+                      <Checkbox
+                        aria-label="Select row"
+                        checked={checked}
+                        onCheckedChange={() => toggleRow(row.id)}
+                      />
+                    </TableCell>
+                  )}
+                  {columns.map((col) => (
+                    <TableCell
+                      key={col.id}
+                      className={cn(
+                        "py-3 text-sm",
+                        col.align === "right" && "text-right tabular-nums",
+                        col.align === "center" && "text-center",
+                        col.className,
+                      )}
+                    >
+                      {col.accessor(row)}
+                    </TableCell>
+                  ))}
+                  {rowActions && (
+                    <TableCell className="w-10 py-3 text-right">{rowActions(row)}</TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

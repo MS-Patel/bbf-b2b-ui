@@ -14,6 +14,7 @@ import {
   Settings,
   ShoppingCart,
   Wrench,
+  Component,
   type LucideIcon,
 } from "lucide-react";
 import type { UserRole } from "@/types/auth";
@@ -66,6 +67,7 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Integrations & Logs", to: "/app/admin/system", icon: Activity },
       { label: "Integration Tools", to: "/app/admin/integration-tools", icon: Wrench },
+      { label: "Components Library", to: "/app/admin/components", icon: Component },
       { label: "System Configuration", to: "/app/admin/system-config", icon: Settings },
     ],
   },

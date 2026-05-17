@@ -46,6 +46,7 @@ import { Route as AppAdminMappingsRouteImport } from './routes/app.admin.mapping
 import { Route as AppAdminIntegrationToolsRouteImport } from './routes/app.admin.integration-tools'
 import { Route as AppAdminDistributorsRouteImport } from './routes/app.admin.distributors'
 import { Route as AppAdminDistributorCategoriesRouteImport } from './routes/app.admin.distributor-categories'
+import { Route as AppAdminComponentsRouteImport } from './routes/app.admin.components'
 import { Route as AppAdminCommissionsRouteImport } from './routes/app.admin.commissions'
 import { Route as AppAdminBrokerageImportsRouteImport } from './routes/app.admin.brokerage-imports'
 import { Route as AppAdminBranchesRouteImport } from './routes/app.admin.branches'
@@ -253,6 +254,11 @@ const AppAdminDistributorCategoriesRoute =
     path: '/admin/distributor-categories',
     getParentRoute: () => AppRoute,
   } as any)
+const AppAdminComponentsRoute = AppAdminComponentsRouteImport.update({
+  id: '/admin/components',
+  path: '/admin/components',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminCommissionsRoute = AppAdminCommissionsRouteImport.update({
   id: '/admin/commissions',
   path: '/admin/commissions',
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/components': typeof AppAdminComponentsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
@@ -403,6 +410,7 @@ export interface FileRoutesByTo {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/components': typeof AppAdminComponentsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
@@ -459,6 +467,7 @@ export interface FileRoutesById {
   '/app/admin/branches': typeof AppAdminBranchesRoute
   '/app/admin/brokerage-imports': typeof AppAdminBrokerageImportsRoute
   '/app/admin/commissions': typeof AppAdminCommissionsRoute
+  '/app/admin/components': typeof AppAdminComponentsRoute
   '/app/admin/distributor-categories': typeof AppAdminDistributorCategoriesRoute
   '/app/admin/distributors': typeof AppAdminDistributorsRouteWithChildren
   '/app/admin/integration-tools': typeof AppAdminIntegrationToolsRoute
@@ -516,6 +525,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/components'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/components'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
@@ -626,6 +637,7 @@ export interface FileRouteTypes {
     | '/app/admin/branches'
     | '/app/admin/brokerage-imports'
     | '/app/admin/commissions'
+    | '/app/admin/components'
     | '/app/admin/distributor-categories'
     | '/app/admin/distributors'
     | '/app/admin/integration-tools'
@@ -940,6 +952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminDistributorCategoriesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/components': {
+      id: '/app/admin/components'
+      path: '/admin/components'
+      fullPath: '/app/admin/components'
+      preLoaderRoute: typeof AppAdminComponentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/commissions': {
       id: '/app/admin/commissions'
       path: '/admin/commissions'
@@ -1143,6 +1162,7 @@ interface AppRouteChildren {
   AppAdminBranchesRoute: typeof AppAdminBranchesRoute
   AppAdminBrokerageImportsRoute: typeof AppAdminBrokerageImportsRoute
   AppAdminCommissionsRoute: typeof AppAdminCommissionsRoute
+  AppAdminComponentsRoute: typeof AppAdminComponentsRoute
   AppAdminDistributorCategoriesRoute: typeof AppAdminDistributorCategoriesRoute
   AppAdminDistributorsRoute: typeof AppAdminDistributorsRouteWithChildren
   AppAdminIntegrationToolsRoute: typeof AppAdminIntegrationToolsRoute
@@ -1188,6 +1208,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminBranchesRoute: AppAdminBranchesRoute,
   AppAdminBrokerageImportsRoute: AppAdminBrokerageImportsRoute,
   AppAdminCommissionsRoute: AppAdminCommissionsRoute,
+  AppAdminComponentsRoute: AppAdminComponentsRoute,
   AppAdminDistributorCategoriesRoute: AppAdminDistributorCategoriesRoute,
   AppAdminDistributorsRoute: AppAdminDistributorsRouteWithChildren,
   AppAdminIntegrationToolsRoute: AppAdminIntegrationToolsRoute,
@@ -1238,12 +1259,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
