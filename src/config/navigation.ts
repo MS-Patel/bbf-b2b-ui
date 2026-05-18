@@ -42,6 +42,7 @@ const adminNav: NavSection[] = [
       { label: "RMs", to: "/app/admin/rms", icon: Users },
       { label: "Mappings", to: "/app/admin/mappings", icon: Activity },
       { label: "Onboarding", to: "/app/admin/onboarding", icon: ShieldCheck },
+      { label: "New Investor Onboarding", to: "/app/admin/onboarding/investor", icon: ShieldCheck },
       { label: "Orders", to: "/app/admin/orders", icon: ShoppingCart },
       { label: "Branches", to: "/app/admin/branches", icon: Building2 },
       { label: "Reconciliation", to: "/app/admin/reconciliation", icon: FileSpreadsheet },
