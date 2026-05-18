@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight, Eye, EyeOff, Loader2, ShieldCheck, TrendingUp } from "lucide-react";
@@ -10,13 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { BrandLogo } from "@/components/brand/brand-logo";
 
@@ -52,12 +45,13 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const navigate = useNavigate();
+  const search = Route.useSearch();
   const setSession = useAuthStore((s) => s.setSession);
 
   const handleSuccess = (role: UserRole) => {
+    const target = getSafeRedirectTarget(search.redirect, ROLE_HOME[role]);
     toast.success("Welcome back");
-    navigate({ to: ROLE_HOME[role] });
+    window.location.assign(target);
   };
 
   return (
@@ -107,6 +101,22 @@ function LoginPage() {
       </div>
     </div>
   );
+}
+
+function getSafeRedirectTarget(redirect: string | undefined, fallback: string) {
+  if (!redirect) return fallback;
+  if (redirect.startsWith("/") && !redirect.startsWith("//")) return redirect;
+
+  try {
+    const url = new URL(redirect, window.location.origin);
+    if (url.origin === window.location.origin) {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    // Fall back to the role home route for malformed redirect values.
+  }
+
+  return fallback;
 }
 
 /* ─── Brand panel ───────────────────────────────────────────────────── */
@@ -358,21 +368,28 @@ function RoleSelect({ value, onChange }: { value: UserRole; onChange: (v: UserRo
   return (
     <div className="space-y-1.5">
       <Label>Sign in as</Label>
-      <Select value={value} onValueChange={(v) => onChange(v as UserRole)}>
-        <SelectTrigger className="h-11">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {ROLE_OPTIONS.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              <div className="flex flex-col">
-                <span className="font-medium">{opt.label}</span>
-                <span className="text-xs text-muted-foreground">{opt.description}</span>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="grid gap-2" role="radiogroup" aria-label="Sign in role">
+        {ROLE_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            role="radio"
+            aria-checked={value === opt.value}
+            onClick={() => onChange(opt.value)}
+            className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 ${
+              value === opt.value
+                ? "border-primary bg-primary/5 text-foreground"
+                : "border-input bg-background text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+            }`}
+          >
+            <span>
+              <span className="block font-medium">{opt.label}</span>
+              <span className="block text-xs text-muted-foreground">{opt.description}</span>
+            </span>
+            <span className={`h-2.5 w-2.5 rounded-full ${value === opt.value ? "bg-primary" : "bg-border"}`} />
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
