@@ -63,6 +63,7 @@ import { Route as AppDistributorOnboardingNewRouteImport } from './routes/app.di
 import { Route as AppAdminRmsNewRouteImport } from './routes/app.admin.rms.new'
 import { Route as AppAdminOrdersNewRouteImport } from './routes/app.admin.orders.new'
 import { Route as AppAdminOnboardingNewRouteImport } from './routes/app.admin.onboarding.new'
+import { Route as AppAdminOnboardingInvestorRouteImport } from './routes/app.admin.onboarding.investor'
 import { Route as AppAdminInvestorsInvestorIdRouteImport } from './routes/app.admin.investors.$investorId'
 import { Route as AppAdminDistributorsNewRouteImport } from './routes/app.admin.distributors.new'
 
@@ -345,6 +346,12 @@ const AppAdminOnboardingNewRoute = AppAdminOnboardingNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppAdminOnboardingRoute,
 } as any)
+const AppAdminOnboardingInvestorRoute =
+  AppAdminOnboardingInvestorRouteImport.update({
+    id: '/investor',
+    path: '/investor',
+    getParentRoute: () => AppAdminOnboardingRoute,
+  } as any)
 const AppAdminInvestorsInvestorIdRoute =
   AppAdminInvestorsInvestorIdRouteImport.update({
     id: '/$investorId',
@@ -402,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/app/rm/': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
   '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
+  '/app/admin/onboarding/investor': typeof AppAdminOnboardingInvestorRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -460,6 +468,7 @@ export interface FileRoutesByTo {
   '/app/rm': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
   '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
+  '/app/admin/onboarding/investor': typeof AppAdminOnboardingInvestorRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -519,6 +528,7 @@ export interface FileRoutesById {
   '/app/rm/': typeof AppRmIndexRoute
   '/app/admin/distributors/new': typeof AppAdminDistributorsNewRoute
   '/app/admin/investors/$investorId': typeof AppAdminInvestorsInvestorIdRoute
+  '/app/admin/onboarding/investor': typeof AppAdminOnboardingInvestorRoute
   '/app/admin/onboarding/new': typeof AppAdminOnboardingNewRoute
   '/app/admin/orders/new': typeof AppAdminOrdersNewRoute
   '/app/admin/rms/new': typeof AppAdminRmsNewRoute
@@ -579,6 +589,7 @@ export interface FileRouteTypes {
     | '/app/rm/'
     | '/app/admin/distributors/new'
     | '/app/admin/investors/$investorId'
+    | '/app/admin/onboarding/investor'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/app/rm'
     | '/app/admin/distributors/new'
     | '/app/admin/investors/$investorId'
+    | '/app/admin/onboarding/investor'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -695,6 +707,7 @@ export interface FileRouteTypes {
     | '/app/rm/'
     | '/app/admin/distributors/new'
     | '/app/admin/investors/$investorId'
+    | '/app/admin/onboarding/investor'
     | '/app/admin/onboarding/new'
     | '/app/admin/orders/new'
     | '/app/admin/rms/new'
@@ -1096,6 +1109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminOnboardingNewRouteImport
       parentRoute: typeof AppAdminOnboardingRoute
     }
+    '/app/admin/onboarding/investor': {
+      id: '/app/admin/onboarding/investor'
+      path: '/investor'
+      fullPath: '/app/admin/onboarding/investor'
+      preLoaderRoute: typeof AppAdminOnboardingInvestorRouteImport
+      parentRoute: typeof AppAdminOnboardingRoute
+    }
     '/app/admin/investors/$investorId': {
       id: '/app/admin/investors/$investorId'
       path: '/$investorId'
@@ -1136,10 +1156,12 @@ const AppAdminInvestorsRouteWithChildren =
   AppAdminInvestorsRoute._addFileChildren(AppAdminInvestorsRouteChildren)
 
 interface AppAdminOnboardingRouteChildren {
+  AppAdminOnboardingInvestorRoute: typeof AppAdminOnboardingInvestorRoute
   AppAdminOnboardingNewRoute: typeof AppAdminOnboardingNewRoute
 }
 
 const AppAdminOnboardingRouteChildren: AppAdminOnboardingRouteChildren = {
+  AppAdminOnboardingInvestorRoute: AppAdminOnboardingInvestorRoute,
   AppAdminOnboardingNewRoute: AppAdminOnboardingNewRoute,
 }
 
@@ -1311,12 +1333,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
