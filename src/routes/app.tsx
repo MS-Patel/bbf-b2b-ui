@@ -10,6 +10,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/app")({
   validateSearch: searchSchema,
   beforeLoad: ({ location }) => {
+    if (typeof window === "undefined") return;
+
     const { isAuthenticated } = useAuthStore.getState();
     if (!isAuthenticated) {
       throw redirect({
